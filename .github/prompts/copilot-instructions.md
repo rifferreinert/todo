@@ -18,7 +18,7 @@ consider these laws when making decisions or providing assistance.
 - Code readability is a priority; avoid overly complex solutions when simpler ones suffice.
 
 ## Agent Behavior
-- Always consider if a task would be better done in xcode. If so instruct the user to open xcode and perform the task there. Wait for them to complete the task before continuing.
+- Always consider if a task would be better done in xcode. Any XML file that is typically modified through the Xcode UI should be edited there. If so instruct the user to open xcode and perform the task there. Wait for them to complete the task before continuing.
   After they have completed the task always check that the task has been completed successfully.
 - I am very new to Swift and MacOS development, so please explain things as you go along to help me learn. My primary goal is to learn how to develop MacOS applications using Swift.
   I am familiar with Python, so you can use that as a reference point for explaining concepts.
