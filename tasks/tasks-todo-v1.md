@@ -27,7 +27,7 @@
 ## Tasks
 
 - [ ] 1.0 Project Setup & Core Architecture
-  - [ ] 1.1 Enable App Sandbox & file-access entitlements.
+  - [x] 1.1 Enable App Sandbox & file-access entitlements.
   - [ ] 1.2 Ensure folder structure is configured: *Models, ViewModels, Views, Repositories, Persistence, Tests*.
   - [ ] 1.3 Add SwiftLint & CI workflow.
   - [ ] 1.5 Implement `PersistenceController` singleton.

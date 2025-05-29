@@ -4,9 +4,13 @@ Guidelines for managing task lists in markdown files to track progress on comple
 
 ## Task Implementation
 - **One sub-task at a time:** Do **NOT** start the next sub‑task until you ask the user for permission and they say “yes” or "y"
-- **Before writing code:**
-  1. Decide on a technical approach to implement the sub‑task.
-  2. Confirm the approach with the user.
+- **Generate Sub Task:** Use the `generate-sub-task` prompt to create a detailed plan for the current sub-task. Do **NOT** start coding
+    until you ask the user for permission to proceed and they say “yes” or "y".
+- **Writing code:**
+  - read the plan in `tasks/plans/task-<task-id>.md` to understand the approach.
+  - Write code in the appropriate files as per the plan.
+  - If you need to create new files, document them in the “Relevant Files” section of the task list.
+  - After implementing a sub‑task, update the task list file and pause for user approval before proceeding to the next sub‑task.
 - **Completion protocol:**
   1. When you finish a **sub‑task**, immediately mark it as completed by changing `[ ]` to `[x]`.
   2. If **all** subtasks underneath a parent task are now `[x]`, also mark the **parent task** as completed.
