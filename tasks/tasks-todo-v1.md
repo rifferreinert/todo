@@ -2,12 +2,12 @@
 
 ## Relevant Files
 
-- `FocusTodoApp.swift` – App entry point; sets up windows & DI.
+- `TodoApp.swift` – App entry point, sets up windows & DI.
 - `Persistence/PersistenceController.swift` – Core Data stack singleton.
 - `Models/Task+CoreDataClass.swift` – Generated Core Data entity.
 - `Repositories/TaskRepository.swift` – Protocol for CRUD access.
 - `Repositories/CoreDataTaskRepository.swift` – Core Data implementation.
-- `ViewModels/TaskViewModel.swift` – One task’s presentation logic.
+- `ViewModels/TaskViewModel.swift` – One task's presentation logic.
 - `ViewModels/TaskListViewModel.swift` – List-level logic & sorting.
 - `Views/FocusBar/FocusBarWindow.swift` – NSWindow wrapper (always-on-top).
 - `Views/FocusBar/FocusBarView.swift` – SwiftUI bar UI.
@@ -37,37 +37,44 @@
   - [x] 1.1 Enable App Sandbox & file-access entitlements.
   - [x] 1.2 Ensure folder structure is configured: *Models, ViewModels, Views, Repositories, Persistence, Tests*.
   - [x] 1.3 Add SwiftLint
-  - [ ] 1.5 Implement `PersistenceController` singleton.
-  - [ ] 1.6 Define `TaskRepository` protocol for dependency injection.
 
-- [ ] 2.0 Data Model & Persistence Layer
+- [ ] 2.0 Data Model & Core Data Setup
   - [ ] 2.1 Design Core Data model (`Task` entity: title, notes, dueDate, isCompleted, order, createdAt).
   - [ ] 2.2 Generate NSManagedObject subclasses.
-  - [ ] 2.3 Implement `CoreDataTaskRepository` (CRUD, fetch sorted).
-  - [ ] 2.4 Write unit tests validating CRUD behaviour and data persistence.
-  - [ ] 2.5 Stub lightweight migration strategy for future schema changes.
+  - [ ] 2.3 Implement `PersistenceController` singleton.
+  - [ ] 2.4 Define `TaskRepository` protocol for dependency injection.
 
-- [ ] 3.0 Always-On-Top Focus Bar
-  - [ ] 3.1 Create `FocusBarWindow` using `NSWindow.Level.statusBar`.
-  - [ ] 3.2 Build `FocusBarView` with task title, opacity slider (20–100 %).
-  - [ ] 3.3 Persist opacity in `UserDefaults`; restore on launch.
-  - [ ] 3.4 Add ellipsis truncation & fade animation on task change.
-  - [ ] 3.5 Mirror bar across all virtual desktops.
-  - [ ] 3.6 Provide VoiceOver labels and dynamic-type support.
-  - [ ] 3.7 UI tests: bar visibility, opacity persistence, title update.
+- [ ] 3.0 Data Persistence Layer
+  - [ ] 3.1 Implement `CoreDataTaskRepository` (CRUD, fetch sorted).
+  - [ ] 3.2 Write unit tests validating CRUD behaviour and data persistence.
+  - [ ] 3.3 Stub lightweight migration strategy for future schema changes.
 
-- [ ] 4.0 Task Management Window
-  - [ ] 4.1 Launch resizable `TaskListWindow` from menu/bar action.
-  - [ ] 4.2 Display list with inline add, delete, edit (title, notes, dueDate).
-  - [ ] 4.3 Implement drag-and-drop reorder overriding auto-sort.
-  - [ ] 4.4 Add global “Toggle Notes” visibility button.
-  - [ ] 4.5 Provide segmented control to switch between *Active* and *Archived*.
-  - [ ] 4.6 Ensure Dark/Light mode & accessibility compatibility.
-  - [ ] 4.7 UI tests covering CRUD, toggle notes, and segmentation.
+- [ ] 4.0 ViewModels & Business Logic
+  - [ ] 4.1 Implement `TaskViewModel` for individual task presentation logic.
+  - [ ] 4.2 Implement `TaskListViewModel` for list-level logic & sorting.
+  - [ ] 4.3 Unit tests for ViewModels (sorting logic, completion flow, edge cases).
 
-- [ ] 5.0 Task Ordering, Completion & Archive
-  - [ ] 5.1 Implement auto-sort flag (default = on) stored in `UserDefaults`.
-  - [ ] 5.2 Update list when flag toggles; fallback to manual order when off.
-  - [ ] 5.3 On completion, move task to *Archived* and select next focus task.
-  - [ ] 5.4 Handle tasks without due dates per spec (bottom of dated list).
-  - [ ] 5.5 Unit tests: sorting logic, completion flow, edge cases.
+- [ ] 5.0 Always-On-Top Focus Bar
+  - [ ] 5.1 Create `FocusBarWindow` using `NSWindow.Level.statusBar`.
+  - [ ] 5.2 Build `FocusBarView` with task title, opacity slider (20–100 %).
+  - [ ] 5.3 Persist opacity in `UserDefaults`; restore on launch.
+  - [ ] 5.4 Add ellipsis truncation & fade animation on task change.
+  - [ ] 5.5 Mirror bar across all virtual desktops.
+  - [ ] 5.6 Provide VoiceOver labels and dynamic-type support.
+  - [ ] 5.7 UI tests: bar visibility, opacity persistence, title update.
+
+- [ ] 6.0 Task Management Window
+  - [ ] 6.1 Launch resizable `TaskListWindow` from menu/bar action.
+  - [ ] 6.2 Display list with inline add, delete, edit (title, notes, dueDate).
+  - [ ] 6.3 Implement drag-and-drop reorder overriding auto-sort.
+  - [ ] 6.4 Add global "Toggle Notes" visibility button.
+  - [ ] 6.5 Provide segmented control to switch between *Active* and *Archived*.
+  - [ ] 6.6 Ensure Dark/Light mode & accessibility compatibility.
+  - [ ] 6.7 UI tests covering CRUD, toggle notes, and segmentation.
+
+- [ ] 7.0 Task Ordering, Completion & Archive
+  - [ ] 7.1 Implement auto-sort flag (default = on) stored in `UserDefaults`.
+  - [ ] 7.2 Update list when flag toggles; fallback to manual order when off.
+  - [ ] 7.3 On completion, move task to *Archived* and select next focus task.
+  - [ ] 7.4 Handle tasks without due dates per spec (bottom of dated list).
+  - [ ] 7.5 Unit tests: sorting logic, completion flow, edge cases.
