@@ -17,19 +17,26 @@
 - `Tests/CoreDataTaskRepositoryTests.swift` – Unit tests for repository.
 - `Tests/FocusBarViewTests.swift` – UI tests for bar behaviour.
 - `Tests/TaskListViewTests.swift` – UI tests for task window.
+- `.swiftlint.yml` – SwiftLint configuration for code style consistency.
+- `scripts/lint.sh` – Manual SwiftLint execution script.
+- `.git/hooks/pre-commit` – Git hook to run SwiftLint before commits.
 
 ### Notes
 
 - Place each `*.test.swift` file in the matching `Tests/` group.
 - Run `xcodebuild test -scheme FocusTodo` to execute all tests.
-- Use SwiftLint to maintain code-style consistency.
+- SwiftLint is configured for code-style consistency:
+  - Run `swiftlint` from project root to check all files
+  - Run `./scripts/lint.sh` for detailed output with help
+  - Git pre-commit hook automatically runs SwiftLint
+  - Due to App Sandbox restrictions, SwiftLint runs via command line instead of Xcode build phase
 
 ## Tasks
 
 - [ ] 1.0 Project Setup & Core Architecture
   - [x] 1.1 Enable App Sandbox & file-access entitlements.
   - [x] 1.2 Ensure folder structure is configured: *Models, ViewModels, Views, Repositories, Persistence, Tests*.
-  - [ ] 1.3 Add SwiftLint
+  - [x] 1.3 Add SwiftLint
   - [ ] 1.5 Implement `PersistenceController` singleton.
   - [ ] 1.6 Define `TaskRepository` protocol for dependency injection.
 
