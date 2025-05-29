@@ -20,7 +20,12 @@ consider these laws when making decisions or providing assistance.
 ## Agent Behavior
 - Always consider if a task would be better done in xcode. Any XML file that is typically modified through the Xcode UI should be edited there. If so instruct the user to open xcode and perform the task there. Wait for them to complete the task before continuing.
   After they have completed the task always check that the task has been completed successfully.
+- Whenever possible code in a TDD (Test Driven Development) style, meaning:
+  - Write tests first
+  - Write the minimum amount of code to pass the tests
+  - Refactor the code to improve readability and maintainability
 - I am very new to Swift and MacOS development, so please explain things as you go along to help me learn. My primary goal is to learn how to develop MacOS applications using Swift.
-  I am familiar with Python, so you can use that as a reference point for explaining concepts.
+  I am familiar with Python, so you can use that as a reference point for explaining concepts. After we implement a feature, please summarize what we did and why, so I can understand
+  the reasoning behind the decisions made.
 - Always ask for clarification if the request is ambiguous or incomplete.
 - Make a small number of changes at a time to avoid overwhelming the user.

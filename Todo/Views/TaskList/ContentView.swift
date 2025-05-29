@@ -12,37 +12,55 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Task.createdAt, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<Item>
+    private var tasks: FetchedResults<Task>
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(items) { item in
+                ForEach(tasks) { task in
                     NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+                        Text("Task: \(task.title ?? "No Title")")
                     } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+                        VStack(alignment: .leading) {
+                            Text(task.title ?? "No Title")
+                                .font(.headline)
+                            if let notes = task.notes {
+                                Text(notes)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            if let createdAt = task.createdAt {
+                                Text("Created: \(createdAt, formatter: taskFormatter)")
+                                    .font(.caption)
+                                    .foregroundColor(.blue)
+                            }
+                        }
                     }
                 }
-                .onDelete(perform: deleteItems)
+                .onDelete(perform: deleteTasks)
             }
             .toolbar {
                 ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                    Button(action: addTask) {
+                        Label("Add Task", systemImage: "plus")
                     }
                 }
             }
-            Text("Select an item")
+            Text("Select a task")
         }
     }
 
-    private func addItem() {
+    private func addTask() {
         withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+            let newTask = Task(context: viewContext)
+            newTask.title = "New Task"
+            newTask.notes = "Add some details here..."
+            newTask.isCompleted = false
+            newTask.order = Int32(tasks.count)
+            newTask.createdAt = Date()
+            newTask.updatedAt = Date()
 
             do {
                 try viewContext.save()
@@ -57,9 +75,9 @@ struct ContentView: View {
         }
     }
 
-    private func deleteItems(offsets: IndexSet) {
+    private func deleteTasks(offsets: IndexSet) {
         withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
+            offsets.map { tasks[$0] }.forEach(viewContext.delete)
 
             do {
                 try viewContext.save()
@@ -75,7 +93,7 @@ struct ContentView: View {
     }
 }
 
-private let itemFormatter: DateFormatter = {
+private let taskFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .short
     formatter.timeStyle = .medium
