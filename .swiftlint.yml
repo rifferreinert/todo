@@ -1,0 +1,73 @@
+# SwiftLint Configuration for Focus To-Do macOS App
+
+# Rules to disable (these can be overly strict for small projects)
+disabled_rules:
+  - trailing_whitespace # Can be handled by editor auto-formatting
+  - todo # Allow TODO comments during development
+
+# Rules to enable (opt-in rules that improve code quality)
+opt_in_rules:
+  - empty_count # Prefer .isEmpty over .count == 0
+  - force_unwrapping # Discourage force unwrapping
+  - implicitly_unwrapped_optional # Discourage implicitly unwrapped optionals
+  - overridden_super_call # Ensure super calls in overridden methods
+  - prohibited_super_call # Prevent unnecessary super calls
+  - redundant_nil_coalescing # Remove redundant nil coalescing
+  - switch_case_alignment # Align switch case statements
+  - unneeded_parentheses_in_closure_argument # Clean up closure syntax
+  - vertical_whitespace_closing_braces # Consistent brace spacing
+  - vertical_whitespace_opening_braces # Consistent brace spacing
+
+# Customize rule thresholds
+line_length:
+  warning: 120
+  error: 200
+
+function_body_length:
+  warning: 50
+  error: 100
+
+type_body_length:
+  warning: 300
+  error: 500
+
+file_length:
+  warning: 400
+  error: 1000
+
+# Exclude generated files and build artifacts
+excluded:
+  - Todo.xcodeproj
+  - TodoTests
+  - TodoUITests
+  - build
+  - .build
+  - DerivedData
+  - "**/Models/*+CoreDataClass.swift" # Exclude Core Data generated files
+  - "**/Models/*+CoreDataProperties.swift" # Exclude Core Data generated files
+
+# Include only Swift files in the main target
+included:
+  - Todo
+
+# Force case sensitivity for imports
+force_cast: warning
+force_try: warning
+force_unwrapping: warning
+
+# Naming conventions
+identifier_name:
+  min_length: 2
+  max_length: 40
+  excluded:
+    - id
+    - ID
+    - x
+    - y
+
+type_name:
+  min_length: 3
+  max_length: 40
+
+# Custom reporter (use xcode for integration)
+reporter: "xcode"
