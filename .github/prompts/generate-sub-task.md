@@ -1,4 +1,4 @@
-# Rule: Generate a detailed plan for a sub-task based on the provided task description.
+# Generate a detailed plan for a sub-task based on the provided task description.
 
 ## Goal
 
@@ -19,12 +19,7 @@ The generated markdown file should follow this structure:
 ## Problem Statement and Goal
 
 ## Relevant Files
-- `path/to/potential/file1.ts` - Brief description of why this file is relevant (e.g., Contains the main component for this feature).
-- `path/to/file1.test.ts` - Unit tests for `file1.ts`.
-- `path/to/another/file.tsx` - Brief description (e.g., API route handler for data submission).
-- `path/to/another/file.test.tsx` - Unit tests for `another/file.tsx`.
-- `lib/utils/helpers.ts` - Brief description (e.g., Utility functions needed for calculations).
-- `lib/utils/helpers.test.ts` - Unit tests for `helpers.ts`.
+Bullet list of relevant files that will be created or modified for this sub-task, with a brief description of each file's purpose.
 
 ## Inputs & Outputs
 Describe the expected inputs and outputs for the sub-task, including any data structures or formats.
