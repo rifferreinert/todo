@@ -48,8 +48,8 @@
   - [x] 3.2 Write unit tests validating CRUD behaviour and data persistence.
   - [x] 3.3 Stub lightweight migration strategy for future schema changes.
 
-- [ ] 4.0 ViewModels & Business Logic
-  - [ ] 4.1 Implement `TaskViewModel` for individual task presentation logic.
+- [x] 4.0 ViewModels & Business Logic
+  - [x] 4.1 Implement `TaskViewModel` for individual task presentation logic.
   - [ ] 4.2 Implement `TaskListViewModel` for list-level logic & sorting.
   - [ ] 4.3 Unit tests for ViewModels (sorting logic, completion flow, edge cases).
 
