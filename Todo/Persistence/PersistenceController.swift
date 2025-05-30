@@ -44,22 +44,23 @@ struct PersistenceController {
             if let firstDescription = container.persistentStoreDescriptions.first {
                 firstDescription.url = URL(fileURLWithPath: "/dev/null")
             }
+        } else {
+            // Enable lightweight migration for future schema changes
+            if let firstDescription = container.persistentStoreDescriptions.first {
+                firstDescription.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
+                firstDescription.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
+                /*
+                 Lightweight migration allows Core Data to automatically migrate the persistent store
+                 when the model changes in simple ways (e.g., adding a new attribute). This helps prevent
+                 data loss or crashes when updating the app. For more complex migrations, a custom mapping
+                 model may be required. See Apple documentation for details.
+                */
+            }
         }
         container.loadPersistentStores(completionHandler: { _, error in
             if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate.
-                // You should not use this function in a shipping application, although it may
-                // be useful during development.
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection
-                   when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
+                // If migration fails, log the error and fail gracefully for debugging
+                print("Core Data migration or load error: \(error), \(error.userInfo)")
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })

@@ -43,10 +43,10 @@
   - [x] 2.3 Implement `PersistenceController` singleton.
   - [x] 2.4 Define `TaskRepository` protocol for dependency injection.
 
-- [ ] 3.0 Data Persistence Layer
+- [x] 3.0 Data Persistence Layer
   - [x] 3.1 Implement `CoreDataTaskRepository` (CRUD, fetch sorted).
-  - [ ] 3.2 Write unit tests validating CRUD behaviour and data persistence.
-  - [ ] 3.3 Stub lightweight migration strategy for future schema changes.
+  - [x] 3.2 Write unit tests validating CRUD behaviour and data persistence.
+  - [x] 3.3 Stub lightweight migration strategy for future schema changes.
 
 - [ ] 4.0 ViewModels & Business Logic
   - [ ] 4.1 Implement `TaskViewModel` for individual task presentation logic.
