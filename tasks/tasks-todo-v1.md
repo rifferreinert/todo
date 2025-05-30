@@ -4,7 +4,6 @@
 
 - `TodoApp.swift` – App entry point, sets up windows & DI.
 - `Persistence/PersistenceController.swift` – Core Data stack singleton.
-- `Models/Task+CoreDataClass.swift` – Generated Core Data entity.
 - `Repositories/TaskRepository.swift` – Protocol for CRUD access with async/await and error handling.
 - `Repositories/CoreDataTaskRepository.swift` – Core Data implementation.
 - `ViewModels/TaskViewModel.swift` – One task's presentation logic.
