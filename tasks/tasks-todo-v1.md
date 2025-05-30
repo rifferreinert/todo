@@ -5,7 +5,7 @@
 - `TodoApp.swift` – App entry point, sets up windows & DI.
 - `Persistence/PersistenceController.swift` – Core Data stack singleton.
 - `Models/Task+CoreDataClass.swift` – Generated Core Data entity.
-- `Repositories/TaskRepository.swift` – Protocol for CRUD access.
+- `Repositories/TaskRepository.swift` – Protocol for CRUD access with async/await and error handling.
 - `Repositories/CoreDataTaskRepository.swift` – Core Data implementation.
 - `ViewModels/TaskViewModel.swift` – One task's presentation logic.
 - `ViewModels/TaskListViewModel.swift` – List-level logic & sorting.
@@ -42,7 +42,7 @@
   - [x] 2.1 Design Core Data model (`Task` entity: title, notes, dueDate, isCompleted, order, createdAt, updatedAt).
   - [x] 2.2 Generate NSManagedObject subclasses (using automatic class generation).
   - [x] 2.3 Implement `PersistenceController` singleton.
-  - [ ] 2.4 Define `TaskRepository` protocol for dependency injection.
+  - [x] 2.4 Define `TaskRepository` protocol for dependency injection.
 
 - [ ] 3.0 Data Persistence Layer
   - [ ] 3.1 Implement `CoreDataTaskRepository` (CRUD, fetch sorted).
