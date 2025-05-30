@@ -25,7 +25,7 @@ final class TaskViewModel: ObservableObject {
     init(task: Task, repository: TaskRepository) {
         self.task = task
         self.repository = repository
-        self.title = task.title
+        self.title = task.title ?? ""
         self.notes = task.notes
         self.dueDate = task.dueDate
         self.isCompleted = task.isCompleted
@@ -39,7 +39,7 @@ final class TaskViewModel: ObservableObject {
         guard !trimmed.isEmpty else { throw ValidationError.emptyTitle }
         title = trimmed
         task.title = trimmed
-        try await repository.save(task)
+        try await repository.updateTask(task)
     }
 
     @MainActor
@@ -47,7 +47,7 @@ final class TaskViewModel: ObservableObject {
         guard !isEditingDisabled else { return }
         notes = newNotes
         task.notes = newNotes
-        try await repository.save(task)
+        try await repository.updateTask(task)
     }
 
     @MainActor
@@ -55,7 +55,7 @@ final class TaskViewModel: ObservableObject {
         guard !isEditingDisabled else { return }
         dueDate = newDate
         task.dueDate = newDate
-        try await repository.save(task)
+        try await repository.updateTask(task)
     }
 
     @MainActor
@@ -63,7 +63,7 @@ final class TaskViewModel: ObservableObject {
         guard !isEditingDisabled else { return }
         isCompleted = completed
         task.isCompleted = completed
-        try await repository.save(task)
+        try await repository.updateTask(task)
     }
 
     // MARK: - External Deletion Handling

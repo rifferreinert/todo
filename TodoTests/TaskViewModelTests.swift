@@ -5,22 +5,23 @@ import Combine
 /// Unit tests for TaskViewModel presentation logic and validation.
 final class TaskViewModelTests: XCTestCase {
     var cancellables: Set<AnyCancellable> = []
-    var mockRepository: MockTaskRepository!
-    var sampleTask: Task!
+    fileprivate var mockRepository: MockTaskRepository!
+    fileprivate var sampleTask: Task!
 
     override func setUp() {
         super.setUp()
         mockRepository = MockTaskRepository()
-        sampleTask = Task(
-            id: UUID(),
-            title: "Sample Task",
-            notes: "Some notes",
-            dueDate: Date().addingTimeInterval(3600),
-            isCompleted: false,
-            order: 0,
-            createdAt: Date(),
-            updatedAt: Date()
-        )
+        // Use Core Data Task entity for sampleTask
+        let context = PersistenceController.preview.container.viewContext
+        let task = Task(context: context)
+        task.title = "Sample Task"
+        task.notes = "Some notes"
+        task.dueDate = Date().addingTimeInterval(3600)
+        task.isCompleted = false
+        task.order = 0
+        task.createdAt = Date()
+        task.updatedAt = Date()
+        sampleTask = task
     }
 
     override func tearDown() {
@@ -70,6 +71,7 @@ final class TaskViewModelTests: XCTestCase {
         }
     }
 
+    @MainActor
     func testTaskDeletedExternallyDisablesEditing() {
         let vm = TaskViewModel(task: sampleTask, repository: mockRepository)
         vm.handleTaskDeleted()
@@ -79,27 +81,40 @@ final class TaskViewModelTests: XCTestCase {
 
 // MARK: - Helpers
 
-private class MockTaskRepository: TaskRepository {
+fileprivate class MockTaskRepository: TaskRepository {
     struct MockError: Error {}
     var shouldFail = false
     var lastSavedTask: Task?
 
-    func save(_ task: Task) async throws {
+    func createTask(title: String, notes: String?, dueDate: Date?) async throws -> Task {
+        if shouldFail { throw MockError() }
+        let context = PersistenceController.preview.container.viewContext
+        let task = Task(context: context)
+        task.title = title
+        task.notes = notes
+        task.dueDate = dueDate
+        task.isCompleted = false
+        task.order = 0
+        task.createdAt = Date()
+        task.updatedAt = Date()
+        lastSavedTask = task
+        return task
+    }
+    func updateTask(_ task: Task) async throws {
         if shouldFail { throw MockError() }
         lastSavedTask = task
     }
-    // ...other protocol methods as needed...
-}
-
-private struct Task: Equatable {
-    let id: UUID
-    var title: String
-    var notes: String?
-    var dueDate: Date?
-    var isCompleted: Bool
-    var order: Int
-    var createdAt: Date
-    var updatedAt: Date
+    func deleteTask(_ task: Task) async throws { }
+    func fetchAllActiveTasks() async throws -> [Task] { return [] }
+    func fetchAllArchivedTasks() async throws -> [Task] { return [] }
+    func fetchTasksSorted(by sortOrder: TaskSortOrder) async throws -> [Task] { return [] }
+    func fetchNextFocusTask() async throws -> Task? { return nil }
+    func markTaskComplete(_ task: Task) async throws -> Task { return task }
+    func markTaskActive(_ task: Task) async throws -> Task { return task }
+    func reorderTasks(_ tasks: [Task]) async throws { }
+    func deleteAllCompletedTasks() async throws -> Int { return 0 }
+    func getActiveTaskCount() async throws -> Int { return 0 }
+    func getArchivedTaskCount() async throws -> Int { return 0 }
 }
 
 // Async throws helper for XCTest
