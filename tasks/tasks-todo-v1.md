@@ -3,19 +3,23 @@
 ## Relevant Files
 
 - `TodoApp.swift` – App entry point, sets up windows & DI.
-- `Persistence/PersistenceController.swift` – Core Data stack singleton.
-- `Repositories/TaskRepository.swift` – Protocol for CRUD access with async/await and error handling.
-- `Repositories/CoreDataTaskRepository.swift` – Core Data implementation.
-- `ViewModels/TaskViewModel.swift` – One task's presentation logic.
-- `ViewModels/TaskListViewModel.swift` – List-level logic & sorting.
-- `Views/FocusBar/FocusBarWindow.swift` – NSWindow wrapper (always-on-top).
-- `Views/FocusBar/FocusBarView.swift` – SwiftUI bar UI.
-- `Views/TaskList/TaskListWindow.swift` – Editing window host.
-- `Views/TaskList/TaskListView.swift` – SwiftUI list UI.
-- `Resources/Assets.xcassets` – SF Symbols & colour sets.
-- `Tests/CoreDataTaskRepositoryTests.swift` – Unit tests for repository.
-- `Tests/FocusBarViewTests.swift` – UI tests for bar behaviour.
-- `Tests/TaskListViewTests.swift` – UI tests for task window.
+- `Todo/Persistence/PersistenceController.swift` – Core Data stack singleton.
+- `Todo/Repositories/TaskRepository.swift` – Protocol for CRUD access with async/await and error handling.
+- `Todo/Repositories/CoreDataTaskRepository.swift` – Core Data implementation.
+- `Todo/ViewModels/TaskViewModel.swift` – One task's presentation logic.
+- `Todo/ViewModels/TaskListViewModel.swift` – List-level logic & sorting.
+- `Todo/Views/FocusBar/FocusBarWindow.swift` – NSWindow wrapper (always-on-top).
+- `Todo/Views/FocusBar/FocusBarView.swift` – SwiftUI bar UI.
+- `Todo/Views/TaskList/TaskListWindow.swift` – Editing window host.
+- `Todo/Views/TaskList/TaskListView.swift` – SwiftUI list UI.
+- `Todo/Resources/Assets.xcassets` – SF Symbols & colour sets.
+- `TodoTests/CoreDataTaskRepositoryTests.swift` – Unit tests for repository.
+- `TodoTests/TaskViewModelTests.swift` – Unit tests for task ViewModel.
+- `TodoTests/TaskListViewModelTests.swift` – Unit tests for task list ViewModel.
+- `TodoTests/TodoTests.swift` – Main test suite entry point.
+- `TodoTests/TaskRepositoryTests.swift` – Tests for TaskRepository protocol.
+- `TodoUITests/FocusBarViewTests.swift` – UI tests for bar behaviour.
+- `TodoUITests/TaskListViewTests.swift` – UI tests for task window.
 - `.swiftlint.yml` – SwiftLint configuration for code style consistency.
 - `scripts/lint.sh` – Manual SwiftLint execution script.
 - `.git/hooks/pre-commit` – Git hook to run SwiftLint before commits.
