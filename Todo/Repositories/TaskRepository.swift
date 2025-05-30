@@ -151,15 +151,13 @@ extension TaskRepository {
     /// - Returns: true if there are active tasks, false otherwise
     /// - Throws: Same errors as `getActiveTaskCount()`
     func hasActiveTasks() async throws -> Bool {
-        let count = try await getActiveTaskCount()
-        return !isEmpty
+        return try await getActiveTaskCount() > 0
     }
 
     /// Convenience method to check if any archived tasks exist
     /// - Returns: true if there are archived tasks, false otherwise
     /// - Throws: Same errors as `getArchivedTaskCount()`
     func hasArchivedTasks() async throws -> Bool {
-        let count = try await getArchivedTaskCount()
-        return !isEmpty
+        return try await getArchivedTaskCount() > 0
     }
 }

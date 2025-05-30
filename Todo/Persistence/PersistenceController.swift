@@ -14,12 +14,12 @@ struct PersistenceController {
     static let preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
-        for i in 0..<3 {
+        for index in 0..<3 {
             let newTask = Task(context: viewContext)
-            newTask.title = "Sample Task \(i + 1)"
+            newTask.title = "Sample Task \(index + 1)"
             newTask.notes = "This is a sample task for preview"
             newTask.isCompleted = false
-            newTask.order = Int32(i)
+            newTask.order = Int32(index)
             newTask.createdAt = Date()
             newTask.updatedAt = Date()
         }
@@ -41,7 +41,9 @@ struct PersistenceController {
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "Todo")
         if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+            if let firstDescription = container.persistentStoreDescriptions.first {
+                firstDescription.url = URL(fileURLWithPath: "/dev/null")
+            }
         }
         container.loadPersistentStores(completionHandler: { _, error in
             if let error = error as NSError? {
@@ -49,7 +51,6 @@ struct PersistenceController {
                 // fatalError() causes the application to generate a crash log and terminate.
                 // You should not use this function in a shipping application, although it may
                 // be useful during development.
-
                 /*
                  Typical reasons for an error here include:
                  * The parent directory does not exist, cannot be created, or disallows writing.

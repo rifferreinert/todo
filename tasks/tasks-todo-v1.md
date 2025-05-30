@@ -44,7 +44,7 @@
   - [x] 2.4 Define `TaskRepository` protocol for dependency injection.
 
 - [ ] 3.0 Data Persistence Layer
-  - [ ] 3.1 Implement `CoreDataTaskRepository` (CRUD, fetch sorted).
+  - [x] 3.1 Implement `CoreDataTaskRepository` (CRUD, fetch sorted).
   - [ ] 3.2 Write unit tests validating CRUD behaviour and data persistence.
   - [ ] 3.3 Stub lightweight migration strategy for future schema changes.
 
