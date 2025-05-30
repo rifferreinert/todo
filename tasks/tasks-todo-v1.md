@@ -38,10 +38,10 @@
   - [x] 1.2 Ensure folder structure is configured: *Models, ViewModels, Views, Repositories, Persistence, Tests*.
   - [x] 1.3 Add SwiftLint
 
-- [ ] 2.0 Data Model & Core Data Setup
-  - [ ] 2.1 Design Core Data model (`Task` entity: title, notes, dueDate, isCompleted, order, createdAt).
-  - [ ] 2.2 Generate NSManagedObject subclasses.
-  - [ ] 2.3 Implement `PersistenceController` singleton.
+- [x] 2.0 Data Model & Core Data Setup
+  - [x] 2.1 Design Core Data model (`Task` entity: title, notes, dueDate, isCompleted, order, createdAt, updatedAt).
+  - [x] 2.2 Generate NSManagedObject subclasses (using automatic class generation).
+  - [x] 2.3 Implement `PersistenceController` singleton.
   - [ ] 2.4 Define `TaskRepository` protocol for dependency injection.
 
 - [ ] 3.0 Data Persistence Layer
