@@ -31,8 +31,8 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
 
     /// Test that creating a task with an empty title throws an error.
     func testCreateTaskWithEmptyTitleThrows() async {
-        await XCTAssertThrowsErrorAsync {
-            _ = try await repository.createTask(title: "", notes: nil, dueDate: nil)
+        await XCTAssertThrowsErrorAsync { [self] in
+            _ = try await self.repository.createTask(title: "", notes: nil, dueDate: nil)
         }
     }
 
@@ -56,9 +56,9 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
 
     /// Test deleting a single task among several and ensuring only the desired task is deleted.
     func testDeleteTask() async throws {
-        let task1 = try await repository.createTask(title: "Task 1", notes: nil, dueDate: nil)
+        _ = try await repository.createTask(title: "Task 1", notes: nil, dueDate: nil)
         let task2 = try await repository.createTask(title: "Task 2", notes: nil, dueDate: nil)
-        let task3 = try await repository.createTask(title: "Task 3", notes: nil, dueDate: nil)
+        _ = try await repository.createTask(title: "Task 3", notes: nil, dueDate: nil)
         try await repository.deleteTask(task2)
         let tasks = try await repository.fetchAllActiveTasks()
         let titles = tasks.map { $0.title }
@@ -70,7 +70,7 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
 
     /// Test fetching all active and archived tasks.
     func testFetchAllActiveAndArchivedTasks() async throws {
-        let active = try await repository.createTask(title: "Active", notes: nil, dueDate: nil)
+        _ = try await repository.createTask(title: "Active", notes: nil, dueDate: nil)
         let completed = try await repository.createTask(title: "Completed", notes: nil, dueDate: nil)
         _ = try await repository.markTaskComplete(completed)
         let activeTasks = try await repository.fetchAllActiveTasks()
@@ -97,7 +97,7 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
         let byTitle = try await repository.fetchTasksSorted(by: .title(ascending: true))
         XCTAssertEqual(byTitle.map { $0.title }, ["Task 1", "Task 2", "Task 3"])
         // By manual order (default order is creation order: t1, t2, t3)
-        var reordered = [t3, t1, t2]
+        let reordered = [t3, t1, t2]
         try await repository.reorderTasks(reordered)
         let byManual = try await repository.fetchTasksSorted(by: .manualOrder)
         XCTAssertEqual(byManual.map { $0.title }, ["Task 3", "Task 1", "Task 2"])
@@ -129,7 +129,7 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
 
     /// Test deleting all completed tasks.
     func testDeleteAllCompletedTasks() async throws {
-        let t1 = try await repository.createTask(title: "Active", notes: nil, dueDate: nil)
+        _ = try await repository.createTask(title: "Active", notes: nil, dueDate: nil)
         let t2 = try await repository.createTask(title: "Done", notes: nil, dueDate: nil)
         _ = try await repository.markTaskComplete(t2)
         let deletedCount = try await repository.deleteAllCompletedTasks()
@@ -140,7 +140,7 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
 
     /// Test getting the count of active and archived tasks.
     func testGetActiveAndArchivedTaskCount() async throws {
-        let t1 = try await repository.createTask(title: "Active", notes: nil, dueDate: nil)
+        _ = try await repository.createTask(title: "Active", notes: nil, dueDate: nil)
         let t2 = try await repository.createTask(title: "Done", notes: nil, dueDate: nil)
         _ = try await repository.markTaskComplete(t2)
         let activeCount = try await repository.getActiveTaskCount()
@@ -151,8 +151,8 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
 
     /// Test fetching the next focus task (should be the first active task).
     func testFetchNextFocusTask() async throws {
-        let t1 = try await repository.createTask(title: "First", notes: nil, dueDate: nil)
-        let t2 = try await repository.createTask(title: "Second", notes: nil, dueDate: nil)
+        _ = try await repository.createTask(title: "First", notes: nil, dueDate: nil)
+        _ = try await repository.createTask(title: "Second", notes: nil, dueDate: nil)
         let focus = try await repository.fetchNextFocusTask()
         XCTAssertEqual(focus?.title, "First")
     }
@@ -169,8 +169,8 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
             createdAt: Date(),
             updatedAt: Date()
         )
-        await XCTAssertThrowsErrorAsync {
-            try await repository.updateTask(fake)
+        await XCTAssertThrowsErrorAsync { [self] in
+            try await self.repository.updateTask(fake)
         }
     }
 
@@ -186,8 +186,8 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
             createdAt: Date(),
             updatedAt: Date()
         )
-        await XCTAssertThrowsErrorAsync {
-            try await repository.deleteTask(fake)
+        await XCTAssertThrowsErrorAsync { [self] in
+            try await self.repository.deleteTask(fake)
         }
     }
 
@@ -203,8 +203,8 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
             createdAt: Date(),
             updatedAt: Date()
         )
-        await XCTAssertThrowsErrorAsync {
-            _ = try await repository.markTaskComplete(fake)
+        await XCTAssertThrowsErrorAsync { [self] in
+            _ = try await self.repository.markTaskComplete(fake)
         }
     }
 
@@ -220,14 +220,14 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
             createdAt: Date(),
             updatedAt: Date()
         )
-        await XCTAssertThrowsErrorAsync {
-            _ = try await repository.markTaskActive(fake)
+        await XCTAssertThrowsErrorAsync { [self] in
+            _ = try await self.repository.markTaskActive(fake)
         }
     }
 
     /// Test reordering with an invalid task throws an error.
     func testReorderWithInvalidTaskThrows() async {
-        let t1 = try await repository.createTask(title: "A", notes: nil, dueDate: nil)
+        let t1 = try! await repository.createTask(title: "A", notes: nil, dueDate: nil)
         let fake = TaskDTO(
             id: UUID(),
             title: "Fake",
@@ -238,8 +238,8 @@ final class CoreDataTaskRepositoryTests: XCTestCase {
             createdAt: Date(),
             updatedAt: Date()
         )
-        await XCTAssertThrowsErrorAsync {
-            try await repository.reorderTasks([t1, fake])
+        await XCTAssertThrowsErrorAsync { [self] in
+            try await self.repository.reorderTasks([t1, fake])
         }
     }
 }

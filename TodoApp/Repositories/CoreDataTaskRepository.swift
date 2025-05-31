@@ -177,11 +177,25 @@ final class CoreDataTaskRepository: TaskRepository {
     func reorderTasks(_ tasks: [TaskDTO]) async throws {
         return try await context.perform {
             for (index, dto) in tasks.enumerated() {
-                let task = try self.context.existingObject(with: dto.id as! NSManagedObjectID) as? Task
-                if let task = task {
-                    task.order = Int32(index)
-                } else {
-                    throw TaskRepositoryError.taskNotFound
+                do {
+                    guard let objectID = dto.id as? NSManagedObjectID else {
+                        throw TaskRepositoryError.persistenceFailure("Invalid objectID type")
+                    }
+                    let task = try self.context.existingObject(with: objectID) as? Task
+                    if let task = task {
+                        task.order = Int32(index)
+                    } else {
+                        throw TaskRepositoryError.taskNotFound
+                    }
+                } catch let error as NSError {
+                    // NSManagedObjectNotFoundError is not a public constant, so check error code 133000
+                    if error.domain == NSCocoaErrorDomain && error.code == 133000 {
+                        throw TaskRepositoryError.taskNotFound
+                    } else if error.domain == NSCocoaErrorDomain && error.code == NSManagedObjectReferentialIntegrityError {
+                        throw TaskRepositoryError.taskNotFound
+                    } else {
+                        throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
+                    }
                 }
             }
             do {
