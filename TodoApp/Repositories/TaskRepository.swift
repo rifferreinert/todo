@@ -161,3 +161,26 @@ extension TaskRepository {
         return try await getArchivedTaskCount() > 0
     }
 }
+
+// MARK: - Task Data Transfer Object (DTO)
+
+/// A data transfer object representing a task, decoupled from Core Data.
+/// Use this type for all repository operations and view models.
+struct TaskDTO: Identifiable, Equatable {
+    /// The unique identifier for the task (backed by Core Data objectID)
+    let id: AnyHashable
+    /// The task title (required, plain text)
+    let title: String
+    /// Optional notes for the task (plain text)
+    let notes: String?
+    /// Optional due date for the task
+    let dueDate: Date?
+    /// Whether the task is completed (archived)
+    let isCompleted: Bool
+    /// Manual order value for custom sorting
+    let order: Int32
+    /// The date the task was created
+    let createdAt: Date
+    /// The date the task was last updated
+    let updatedAt: Date
+}
