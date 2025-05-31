@@ -48,7 +48,7 @@ excluded:
 
 # Include only Swift files in the main target
 included:
-  - Todo
+  - TodoApp
 
 # Force case sensitivity for imports
 force_cast: warning

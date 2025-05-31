@@ -3,16 +3,16 @@
 ## Relevant Files
 
 - `TodoApp.swift` – App entry point, sets up windows & DI.
-- `Todo/Persistence/PersistenceController.swift` – Core Data stack singleton.
-- `Todo/Repositories/TaskRepository.swift` – Protocol for CRUD access with async/await and error handling.
-- `Todo/Repositories/CoreDataTaskRepository.swift` – Core Data implementation.
-- `Todo/ViewModels/TaskViewModel.swift` – One task's presentation logic.
-- `Todo/ViewModels/TaskListViewModel.swift` – List-level logic & sorting.
-- `Todo/Views/FocusBar/FocusBarWindow.swift` – NSWindow wrapper (always-on-top).
-- `Todo/Views/FocusBar/FocusBarView.swift` – SwiftUI bar UI.
-- `Todo/Views/TaskList/TaskListWindow.swift` – Editing window host.
-- `Todo/Views/TaskList/TaskListView.swift` – SwiftUI list UI.
-- `Todo/Resources/Assets.xcassets` – SF Symbols & colour sets.
+- `TodoApp/Persistence/PersistenceController.swift` – Core Data stack singleton.
+- `TodoApp/Repositories/TaskRepository.swift` – Protocol for CRUD access with async/await and error handling.
+- `TodoApp/Repositories/CoreDataTaskRepository.swift` – Core Data implementation.
+- `TodoApp/ViewModels/TaskViewModel.swift` – One task's presentation logic.
+- `TodoApp/ViewModels/TaskListViewModel.swift` – List-level logic & sorting.
+- `TodoApp/Views/FocusBar/FocusBarWindow.swift` – NSWindow wrapper (always-on-top).
+- `TodoApp/Views/FocusBar/FocusBarView.swift` – SwiftUI bar UI.
+- `TodoApp/Views/TaskList/TaskListWindow.swift` – Editing window host.
+- `TodoApp/Views/TaskList/TaskListView.swift` – SwiftUI list UI.
+- `TodoApp/Resources/Assets.xcassets` – SF Symbols & colour sets.
 - `TodoTests/CoreDataTaskRepositoryTests.swift` – Unit tests for repository.
 - `TodoTests/TaskViewModelTests.swift` – Unit tests for task ViewModel.
 - `TodoTests/TaskListViewModelTests.swift` – Unit tests for task list ViewModel.

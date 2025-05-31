@@ -35,9 +35,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B53240862DE6C4C3009005F8 /* Todo */ = {
+		B53240862DE6C4C3009005F8 /* TodoApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Todo;
+			path = TodoApp;
 			sourceTree = "<group>";
 		};
 		B532409A2DE6C4C5009005F8 /* TodoTests */ = {
@@ -81,7 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				B53240B42DE6C569009005F8 /* .gitignore */,
-				B53240862DE6C4C3009005F8 /* Todo */,
+				B53240862DE6C4C3009005F8 /* TodoApp */,
 				B532409A2DE6C4C5009005F8 /* TodoTests */,
 				B53240A42DE6C4C5009005F8 /* TodoUITests */,
 				B53240852DE6C4C3009005F8 /* Products */,
@@ -114,7 +114,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B53240862DE6C4C3009005F8 /* Todo */,
+				B53240862DE6C4C3009005F8 /* TodoApp */,
 			);
 			name = Todo;
 			packageProductDependencies = (
@@ -399,7 +399,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Todo/Todo.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TodoApp/Todo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -424,7 +424,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Todo/Todo.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TodoApp/Todo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
