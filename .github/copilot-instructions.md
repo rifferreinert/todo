@@ -31,3 +31,20 @@ consider these laws when making decisions or providing assistance.
   the reasoning behind the decisions made.
 - Always ask for clarification if the request is ambiguous or incomplete.
 - Make a small number of changes at a time to avoid overwhelming the user.
+
+## How to Build and Run Tests
+
+### Building the Project
+- Open the project in Xcode and press **Cmd+B** to build.
+- Or, from the command line, run:
+  ```sh
+  xcodebuild build -scheme Todo -destination 'platform=macOS'
+  ```
+
+### Running Tests
+- In Xcode, select the test target and press **Cmd+U** to run all tests.
+- Or, from the command line, run:
+  ```sh
+  xcodebuild test -scheme Todo -destination 'platform=macOS' | tee test-output.log
+  ```
+- This will run all unit and UI tests for the `Todo` scheme on your Mac and save the output to `test-output.log`.
