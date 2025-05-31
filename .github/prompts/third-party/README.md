@@ -1,4 +1,4 @@
-## Third-Party Code
+# Third-Party Code
 
 This folder contains source files imported from the **Original Project**
 (licensed under Apache 2.0).
