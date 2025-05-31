@@ -9,15 +9,16 @@ final class MockTaskRepository: TaskRepository {
 
     func createTask(title: String, notes: String?, dueDate: Date?) async throws -> TaskDTO {
         if shouldFail { throw MockError() }
-        let context = PersistenceController.preview.container.viewContext
-        let task = TaskDTO(context: context)
-        task.title = title
-        task.notes = notes
-        task.dueDate = dueDate
-        task.isCompleted = false
-        task.order = 0
-        task.createdAt = Date()
-        task.updatedAt = Date()
+        let task = TaskDTO(
+            id: UUID(),
+            title: title,
+            notes: notes,
+            dueDate: dueDate,
+            isCompleted: false,
+            order: 0,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
         lastSavedTask = task
         return task
     }
