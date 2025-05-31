@@ -9,9 +9,12 @@ final class CoreDataTaskRepository: TaskRepository {
     }
 
     // MARK: - Mapping Helpers
-    private func mapToDTO(_ task: Task) -> TaskDTO {
-        TaskDTO(
-            id: task.objectID,
+    private func mapToDTO(_ task: Task) throws -> TaskDTO {
+        guard let uuid = task.id else {
+            throw TaskRepositoryError.persistenceFailure("Task entity missing UUID id")
+        }
+        return TaskDTO(
+            id: uuid,
             title: task.title ?? "",
             notes: task.notes,
             dueDate: task.dueDate,
@@ -34,6 +37,19 @@ final class CoreDataTaskRepository: TaskRepository {
         }
     }
 
+    // Replace fetchManaged to use UUID
+    private func fetchManaged(by uuid: UUID) async throws -> Task {
+        let request: NSFetchRequest<Task> = Task.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", uuid as CVarArg)
+        request.fetchLimit = 1
+        return try await context.perform {
+            guard let task = try self.context.fetch(request).first else {
+                throw TaskRepositoryError.taskNotFound
+            }
+            return task
+        }
+    }
+
     // MARK: - CRUD Operations
     func createTask(title: String, notes: String?, dueDate: Date?) async throws -> TaskDTO {
         guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -41,6 +57,7 @@ final class CoreDataTaskRepository: TaskRepository {
         }
         return try await context.perform {
             let task = Task(context: self.context)
+            task.id = UUID()
             task.title = title
             task.notes = notes
             task.dueDate = dueDate
@@ -53,36 +70,28 @@ final class CoreDataTaskRepository: TaskRepository {
             } catch {
                 throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
             }
-            return self.mapToDTO(task)
+            return try self.mapToDTO(task)
         }
     }
 
-    func updateTask(_ taskDTO: TaskDTO) async throws {
-        let task = try await fetchManaged(taskDTO.id)
-        return try await context.perform {
-            task.title = taskDTO.title
-            task.notes = taskDTO.notes
-            task.dueDate = taskDTO.dueDate
-            task.isCompleted = taskDTO.isCompleted
-            task.order = taskDTO.order
-            task.updatedAt = Date()
-            do {
-                try self.context.save()
-            } catch {
-                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
-            }
+    func updateTask(_ task: TaskDTO) async throws {
+        let managed = try await fetchManaged(by: task.id)
+        managed.title = task.title
+        managed.notes = task.notes
+        managed.dueDate = task.dueDate
+        managed.isCompleted = task.isCompleted
+        managed.order = task.order
+        managed.updatedAt = Date() // Always set updatedAt to now
+        try await context.perform {
+            try self.context.save()
         }
     }
 
-    func deleteTask(_ taskDTO: TaskDTO) async throws {
-        let task = try await fetchManaged(taskDTO.id)
-        return try await context.perform {
-            self.context.delete(task)
-            do {
-                try self.context.save()
-            } catch {
-                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
-            }
+    func deleteTask(_ task: TaskDTO) async throws {
+        let managed = try await fetchManaged(by: task.id)
+        context.delete(managed)
+        try await context.perform {
+            try self.context.save()
         }
     }
 
@@ -94,7 +103,7 @@ final class CoreDataTaskRepository: TaskRepository {
             request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
             do {
                 let results = try self.context.fetch(request)
-                return results.map(self.mapToDTO)
+                return try results.map { try self.mapToDTO($0) }
             } catch {
                 throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
             }
@@ -108,7 +117,7 @@ final class CoreDataTaskRepository: TaskRepository {
             request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
             do {
                 let results = try self.context.fetch(request)
-                return results.map(self.mapToDTO)
+                return try results.map { try self.mapToDTO($0) }
             } catch {
                 throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
             }
@@ -133,7 +142,7 @@ final class CoreDataTaskRepository: TaskRepository {
             }
             do {
                 let results = try self.context.fetch(request)
-                return results.map(self.mapToDTO)
+                return try results.map { try self.mapToDTO($0) }
             } catch {
                 throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
             }
@@ -147,62 +156,32 @@ final class CoreDataTaskRepository: TaskRepository {
 
     // MARK: - Task State Operations
     func markTaskComplete(_ taskDTO: TaskDTO) async throws -> TaskDTO {
-        let task = try await fetchManaged(taskDTO.id)
-        return try await context.perform {
-            task.isCompleted = true
-            task.updatedAt = Date()
-            do {
-                try self.context.save()
-            } catch {
-                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
-            }
-            return self.mapToDTO(task)
+        let managed = try await fetchManaged(by: taskDTO.id)
+        managed.isCompleted = true
+        managed.updatedAt = Date()
+        try await context.perform {
+            try self.context.save()
         }
+        return try mapToDTO(managed)
     }
 
     func markTaskActive(_ taskDTO: TaskDTO) async throws -> TaskDTO {
-        let task = try await fetchManaged(taskDTO.id)
-        return try await context.perform {
-            task.isCompleted = false
-            task.updatedAt = Date()
-            do {
-                try self.context.save()
-            } catch {
-                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
-            }
-            return self.mapToDTO(task)
+        let managed = try await fetchManaged(by: taskDTO.id)
+        managed.isCompleted = false
+        managed.updatedAt = Date()
+        try await context.perform {
+            try self.context.save()
         }
+        return try mapToDTO(managed)
     }
 
     func reorderTasks(_ tasks: [TaskDTO]) async throws {
-        return try await context.perform {
-            for (index, dto) in tasks.enumerated() {
-                do {
-                    guard let objectID = dto.id as? NSManagedObjectID else {
-                        throw TaskRepositoryError.persistenceFailure("Invalid objectID type")
-                    }
-                    let task = try self.context.existingObject(with: objectID) as? Task
-                    if let task = task {
-                        task.order = Int32(index)
-                    } else {
-                        throw TaskRepositoryError.taskNotFound
-                    }
-                } catch let error as NSError {
-                    // NSManagedObjectNotFoundError is not a public constant, so check error code 133000
-                    if error.domain == NSCocoaErrorDomain && error.code == 133000 {
-                        throw TaskRepositoryError.taskNotFound
-                    } else if error.domain == NSCocoaErrorDomain && error.code == NSManagedObjectReferentialIntegrityError {
-                        throw TaskRepositoryError.taskNotFound
-                    } else {
-                        throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
-                    }
-                }
-            }
-            do {
-                try self.context.save()
-            } catch {
-                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
-            }
+        for (index, dto) in tasks.enumerated() {
+            let managed = try await fetchManaged(by: dto.id)
+            managed.order = Int32(index)
+        }
+        try await context.perform {
+            try self.context.save()
         }
     }
 
