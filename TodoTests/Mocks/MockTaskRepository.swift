@@ -5,12 +5,12 @@ import Foundation
 final class MockTaskRepository: TaskRepository {
     struct MockError: Error {}
     var shouldFail = false
-    var lastSavedTask: Task?
+    var lastSavedTask: TaskDTO?
 
-    func createTask(title: String, notes: String?, dueDate: Date?) async throws -> Task {
+    func createTask(title: String, notes: String?, dueDate: Date?) async throws -> TaskDTO {
         if shouldFail { throw MockError() }
         let context = PersistenceController.preview.container.viewContext
-        let task = Task(context: context)
+        let task = TaskDTO(context: context)
         task.title = title
         task.notes = notes
         task.dueDate = dueDate
@@ -21,18 +21,18 @@ final class MockTaskRepository: TaskRepository {
         lastSavedTask = task
         return task
     }
-    func updateTask(_ task: Task) async throws {
+    func updateTask(_ task: TaskDTO) async throws {
         if shouldFail { throw MockError() }
         lastSavedTask = task
     }
-    func deleteTask(_ task: Task) async throws { }
-    func fetchAllActiveTasks() async throws -> [Task] { return [] }
-    func fetchAllArchivedTasks() async throws -> [Task] { return [] }
-    func fetchTasksSorted(by sortOrder: TaskSortOrder) async throws -> [Task] { return [] }
-    func fetchNextFocusTask() async throws -> Task? { return nil }
-    func markTaskComplete(_ task: Task) async throws -> Task { return task }
-    func markTaskActive(_ task: Task) async throws -> Task { return task }
-    func reorderTasks(_ tasks: [Task]) async throws { }
+    func deleteTask(_ task: TaskDTO) async throws { }
+    func fetchAllActiveTasks() async throws -> [TaskDTO] { return [] }
+    func fetchAllArchivedTasks() async throws -> [TaskDTO] { return [] }
+    func fetchTasksSorted(by sortOrder: TaskSortOrder) async throws -> [TaskDTO] { return [] }
+    func fetchNextFocusTask() async throws -> TaskDTO? { return nil }
+    func markTaskComplete(_ task: TaskDTO) async throws -> TaskDTO { return task }
+    func markTaskActive(_ task: TaskDTO) async throws -> TaskDTO { return task }
+    func reorderTasks(_ tasks: [TaskDTO]) async throws { }
     func deleteAllCompletedTasks() async throws -> Int { return 0 }
     func getActiveTaskCount() async throws -> Int { return 0 }
     func getArchivedTaskCount() async throws -> Int { return 0 }

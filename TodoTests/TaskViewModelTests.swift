@@ -6,7 +6,7 @@ import Combine
 final class TaskViewModelTests: XCTestCase {
     var cancellables: Set<AnyCancellable> = []
     fileprivate var mockRepository: MockTaskRepository!
-    fileprivate var sampleTask: Task!
+    fileprivate var sampleTask: TaskDTO!
 
     override func setUp() {
         super.setUp()
@@ -21,7 +21,7 @@ final class TaskViewModelTests: XCTestCase {
         task.order = 0
         task.createdAt = Date()
         task.updatedAt = Date()
-        sampleTask = task
+        sampleTask = TaskDTO(task)
     }
 
     override func tearDown() {
