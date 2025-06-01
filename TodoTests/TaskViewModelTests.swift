@@ -8,19 +8,12 @@ final class TaskViewModelTests: XCTestCase {
     fileprivate var mockRepository: MockTaskRepository!
     fileprivate var sampleTask: TaskDTO!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         mockRepository = MockTaskRepository()
-        // Create a sample TaskDTO directly (no Core Data)
-        sampleTask = TaskDTO(
-            id: UUID(),
-            title: "Sample Task",
-            notes: "Some notes",
-            dueDate: Date().addingTimeInterval(3600),
-            isCompleted: false,
-            order: 0,
-            createdAt: Date(),
-            updatedAt: Date()
+        sampleTask = try await mockRepository.createTask(title: "Sample Task",
+                                                        notes: "Some notes",
+                                                        dueDate: Date().addingTimeInterval(3600)
         )
     }
 
@@ -44,7 +37,7 @@ final class TaskViewModelTests: XCTestCase {
         let newTitle = "Updated Title"
         try await vm.updateTitle(newTitle)
         XCTAssertEqual(vm.title, newTitle)
-        XCTAssertEqual(mockRepository.lastSavedTask?.title, newTitle)
+        XCTAssertEqual(mockRepository.lastSavedTaskDTO?.title, newTitle)
     }
 
     func testUpdateWithEmptyTitleThrowsValidationError() async {
@@ -60,7 +53,7 @@ final class TaskViewModelTests: XCTestCase {
         let newDate = Date().addingTimeInterval(7200)
         try await vm.updateDueDate(newDate)
         XCTAssertEqual(vm.dueDate, newDate)
-        XCTAssertEqual(mockRepository.lastSavedTask?.dueDate, newDate)
+        XCTAssertEqual(mockRepository.lastSavedTaskDTO?.dueDate, newDate)
     }
 
     func testRepositorySaveFailureSurfacesError() async {
