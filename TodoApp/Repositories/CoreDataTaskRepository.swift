@@ -1,47 +1,63 @@
 import Foundation
 import CoreData
 
-/// Sorting options for fetching tasks.
-enum TaskSortOption {
-    case dueDate
-    case createdAt
-}
-
-/// A struct representing a Task for use outside Core Data.
-struct TaskModel: Identifiable, Equatable {
-    let id: NSManagedObjectID
-    var title: String
-    var notes: String?
-    var dueDate: Date?
-    var isCompleted: Bool
-    var order: Int32
-    var createdAt: Date
-    var updatedAt: Date
-}
-
-/// Repository for CRUD operations on Task entities using Core Data.
-final class CoreDataTaskRepository {
+final class CoreDataTaskRepository: TaskRepository {
     private let context: NSManagedObjectContext
 
-    /// Initialize with a Core Data context.
-    /// - Parameter context: The NSManagedObjectContext to use (should be background for fetches).
     init(context: NSManagedObjectContext) {
         self.context = context
     }
 
-    /// Create a new task.
-    /// - Parameters:
-    ///   - title: The task title (must not be empty).
-    ///   - notes: Optional notes.
-    ///   - dueDate: Optional due date.
-    /// - Returns: The created TaskModel.
-    func createTask(title: String, notes: String?, dueDate: Date?) async throws -> TaskModel {
+    // MARK: - Mapping Helpers
+    private func mapToDTO(_ task: Task) throws -> TaskDTO {
+        guard let uuid = task.id else {
+            throw TaskRepositoryError.persistenceFailure("Task entity missing UUID id")
+        }
+        return TaskDTO(
+            id: uuid,
+            title: task.title ?? "",
+            notes: task.notes,
+            dueDate: task.dueDate,
+            isCompleted: task.isCompleted,
+            order: task.order,
+            createdAt: task.createdAt ?? Date(),
+            updatedAt: task.updatedAt ?? Date()
+        )
+    }
+
+    private func fetchManaged(_ id: AnyHashable) async throws -> Task {
+        guard let objectID = id as? NSManagedObjectID else {
+            throw TaskRepositoryError.persistenceFailure("Invalid objectID type")
+        }
+        return try await context.perform {
+            guard let task = try self.context.existingObject(with: objectID) as? Task else {
+                throw TaskRepositoryError.taskNotFound
+            }
+            return task
+        }
+    }
+
+    // Replace fetchManaged to use UUID
+    private func fetchManaged(by uuid: UUID) async throws -> Task {
+        let request: NSFetchRequest<Task> = Task.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", uuid as CVarArg)
+        request.fetchLimit = 1
+        return try await context.perform {
+            guard let task = try self.context.fetch(request).first else {
+                throw TaskRepositoryError.taskNotFound
+            }
+            return task
+        }
+    }
+
+    // MARK: - CRUD Operations
+    func createTask(title: String, notes: String?, dueDate: Date?) async throws -> TaskDTO {
         guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw NSError(domain: "TaskRepository", code: 1,
-                          userInfo: [NSLocalizedDescriptionKey: "Title must not be empty"])
+            throw TaskRepositoryError.invalidTaskData("Title must not be empty")
         }
         return try await context.perform {
             let task = Task(context: self.context)
+            task.id = UUID()
             task.title = title
             task.notes = notes
             task.dueDate = dueDate
@@ -49,92 +65,165 @@ final class CoreDataTaskRepository {
             task.order = 0
             task.createdAt = Date()
             task.updatedAt = Date()
-            try self.context.save()
-            return TaskModel(
-                id: task.objectID,
-                title: task.title ?? "",
-                notes: task.notes,
-                dueDate: task.dueDate,
-                isCompleted: task.isCompleted,
-                order: task.order,
-                createdAt: task.createdAt ?? Date(),
-                updatedAt: task.updatedAt ?? Date()
-            )
+            do {
+                try self.context.save()
+            } catch {
+                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
+            }
+            return try self.mapToDTO(task)
         }
     }
 
-    /// Fetch all tasks, sorted by the given option.
-    /// - Parameter sortedBy: The sorting option.
-    /// - Returns: An array of TaskModel.
-    func fetchTasks(sortedBy: TaskSortOption) async throws -> [TaskModel] {
+    func updateTask(_ task: TaskDTO) async throws {
+        let managed = try await fetchManaged(by: task.id)
+        managed.title = task.title
+        managed.notes = task.notes
+        managed.dueDate = task.dueDate
+        managed.isCompleted = task.isCompleted
+        managed.order = task.order
+        managed.updatedAt = Date() // Always set updatedAt to now
+        try await context.perform {
+            try self.context.save()
+        }
+    }
+
+    func deleteTask(_ task: TaskDTO) async throws {
+        let managed = try await fetchManaged(by: task.id)
+        context.delete(managed)
+        try await context.perform {
+            try self.context.save()
+        }
+    }
+
+    // MARK: - Query Operations
+    func fetchAllActiveTasks() async throws -> [TaskDTO] {
         return try await context.perform {
             let request: NSFetchRequest<Task> = Task.fetchRequest()
-            switch sortedBy {
-            case .dueDate:
+            request.predicate = NSPredicate(format: "isCompleted == NO")
+            request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+            do {
+                let results = try self.context.fetch(request)
+                return try results.map { try self.mapToDTO($0) }
+            } catch {
+                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
+            }
+        }
+    }
+
+    func fetchAllArchivedTasks() async throws -> [TaskDTO] {
+        return try await context.perform {
+            let request: NSFetchRequest<Task> = Task.fetchRequest()
+            request.predicate = NSPredicate(format: "isCompleted == YES")
+            request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+            do {
+                let results = try self.context.fetch(request)
+                return try results.map { try self.mapToDTO($0) }
+            } catch {
+                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
+            }
+        }
+    }
+
+    func fetchTasksSorted(by sortOrder: TaskSortOrder) async throws -> [TaskDTO] {
+        return try await context.perform {
+            let request: NSFetchRequest<Task> = Task.fetchRequest()
+            switch sortOrder {
+            case .dueDate(let ascending):
                 request.sortDescriptors = [
-                    NSSortDescriptor(key: "dueDate", ascending: true),
+                    NSSortDescriptor(key: "dueDate", ascending: ascending),
                     NSSortDescriptor(key: "order", ascending: true)
                 ]
-            case .createdAt:
-                request.sortDescriptors = [
-                    NSSortDescriptor(key: "createdAt", ascending: true)
-                ]
+            case .createdDate(let ascending):
+                request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: ascending)]
+            case .title(let ascending):
+                request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: ascending)]
+            case .manualOrder:
+                request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
             }
-            let results = try self.context.fetch(request)
-            return results.map { task in
-                TaskModel(
-                    id: task.objectID,
-                    title: task.title ?? "",
-                    notes: task.notes,
-                    dueDate: task.dueDate,
-                    isCompleted: task.isCompleted,
-                    order: task.order,
-                    createdAt: task.createdAt ?? Date(),
-                    updatedAt: task.updatedAt ?? Date()
-                )
+            do {
+                let results = try self.context.fetch(request)
+                return try results.map { try self.mapToDTO($0) }
+            } catch {
+                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
             }
         }
     }
 
-    /// Update a task.
-    /// - Parameter model: The TaskModel to update.
-    /// - Returns: The updated TaskModel.
-    func updateTask(_ model: TaskModel) async throws -> TaskModel {
-        return try await context.perform {
-            guard let task = try self.context.existingObject(with: model.id) as? Task else {
-                throw NSError(domain: "TaskRepository", code: 2,
-                              userInfo: [NSLocalizedDescriptionKey: "Task not found"])
-            }
-            task.title = model.title
-            task.notes = model.notes
-            task.dueDate = model.dueDate
-            task.isCompleted = model.isCompleted
-            task.order = model.order
-            task.updatedAt = Date()
-            try self.context.save()
-            return TaskModel(
-                id: task.objectID,
-                title: task.title ?? "",
-                notes: task.notes,
-                dueDate: task.dueDate,
-                isCompleted: task.isCompleted,
-                order: task.order,
-                createdAt: task.createdAt ?? Date(),
-                updatedAt: task.updatedAt ?? Date()
-            )
-        }
+    func fetchNextFocusTask() async throws -> TaskDTO? {
+        let activeTasks = try await fetchAllActiveTasks()
+        return activeTasks.first
     }
 
-    /// Delete a task.
-    /// - Parameter model: The TaskModel to delete.
-    func deleteTask(_ model: TaskModel) async throws {
+    // MARK: - Task State Operations
+    func markTaskComplete(_ taskDTO: TaskDTO) async throws -> TaskDTO {
+        let managed = try await fetchManaged(by: taskDTO.id)
+        managed.isCompleted = true
+        managed.updatedAt = Date()
         try await context.perform {
-            guard let task = try self.context.existingObject(with: model.id) as? Task else {
-                throw NSError(domain: "TaskRepository", code: 3,
-                              userInfo: [NSLocalizedDescriptionKey: "Task not found"])
-            }
-            self.context.delete(task)
             try self.context.save()
+        }
+        return try mapToDTO(managed)
+    }
+
+    func markTaskActive(_ taskDTO: TaskDTO) async throws -> TaskDTO {
+        let managed = try await fetchManaged(by: taskDTO.id)
+        managed.isCompleted = false
+        managed.updatedAt = Date()
+        try await context.perform {
+            try self.context.save()
+        }
+        return try mapToDTO(managed)
+    }
+
+    func reorderTasks(_ tasks: [TaskDTO]) async throws {
+        for (index, dto) in tasks.enumerated() {
+            let managed = try await fetchManaged(by: dto.id)
+            managed.order = Int32(index)
+        }
+        try await context.perform {
+            try self.context.save()
+        }
+    }
+
+    // MARK: - Batch Operations
+    func deleteAllCompletedTasks() async throws -> Int {
+        return try await context.perform {
+            let request: NSFetchRequest<Task> = Task.fetchRequest()
+            request.predicate = NSPredicate(format: "isCompleted == YES")
+            do {
+                let results = try self.context.fetch(request)
+                for task in results {
+                    self.context.delete(task)
+                }
+                try self.context.save()
+                return results.count
+            } catch {
+                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
+            }
+        }
+    }
+
+    func getActiveTaskCount() async throws -> Int {
+        return try await context.perform {
+            let request: NSFetchRequest<Task> = Task.fetchRequest()
+            request.predicate = NSPredicate(format: "isCompleted == NO")
+            do {
+                return try self.context.count(for: request)
+            } catch {
+                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
+            }
+        }
+    }
+
+    func getArchivedTaskCount() async throws -> Int {
+        return try await context.perform {
+            let request: NSFetchRequest<Task> = Task.fetchRequest()
+            request.predicate = NSPredicate(format: "isCompleted == YES")
+            do {
+                return try self.context.count(for: request)
+            } catch {
+                throw TaskRepositoryError.persistenceFailure(error.localizedDescription)
+            }
         }
     }
 }

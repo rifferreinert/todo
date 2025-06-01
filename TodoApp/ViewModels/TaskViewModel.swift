@@ -17,15 +17,15 @@ final class TaskViewModel: ObservableObject {
     @Published var isEditingDisabled: Bool = false
 
     // MARK: - Private Properties
-    private(set) var task: Task
+    private(set) var task: TaskDTO
     private let repository: TaskRepository
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
-    init(task: Task, repository: TaskRepository) {
+    init(task: TaskDTO, repository: TaskRepository) {
         self.task = task
         self.repository = repository
-        self.title = task.title ?? ""
+        self.title = task.title
         self.notes = task.notes
         self.dueDate = task.dueDate
         self.isCompleted = task.isCompleted
@@ -38,7 +38,16 @@ final class TaskViewModel: ObservableObject {
         let trimmed = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw ValidationError.emptyTitle }
         title = trimmed
-        task.title = trimmed
+        task = TaskDTO(
+            id: task.id,
+            title: trimmed,
+            notes: notes,
+            dueDate: dueDate,
+            isCompleted: isCompleted,
+            order: task.order,
+            createdAt: task.createdAt,
+            updatedAt: Date()
+        )
         try await repository.updateTask(task)
     }
 
@@ -46,7 +55,16 @@ final class TaskViewModel: ObservableObject {
     func updateNotes(_ newNotes: String?) async throws {
         guard !isEditingDisabled else { return }
         notes = newNotes
-        task.notes = newNotes
+        task = TaskDTO(
+            id: task.id,
+            title: title,
+            notes: newNotes,
+            dueDate: dueDate,
+            isCompleted: isCompleted,
+            order: task.order,
+            createdAt: task.createdAt,
+            updatedAt: Date()
+        )
         try await repository.updateTask(task)
     }
 
@@ -54,7 +72,16 @@ final class TaskViewModel: ObservableObject {
     func updateDueDate(_ newDate: Date?) async throws {
         guard !isEditingDisabled else { return }
         dueDate = newDate
-        task.dueDate = newDate
+        task = TaskDTO(
+            id: task.id,
+            title: title,
+            notes: notes,
+            dueDate: newDate,
+            isCompleted: isCompleted,
+            order: task.order,
+            createdAt: task.createdAt,
+            updatedAt: Date()
+        )
         try await repository.updateTask(task)
     }
 
@@ -62,7 +89,16 @@ final class TaskViewModel: ObservableObject {
     func updateCompletion(_ completed: Bool) async throws {
         guard !isEditingDisabled else { return }
         isCompleted = completed
-        task.isCompleted = completed
+        task = TaskDTO(
+            id: task.id,
+            title: title,
+            notes: notes,
+            dueDate: dueDate,
+            isCompleted: completed,
+            order: task.order,
+            createdAt: task.createdAt,
+            updatedAt: Date()
+        )
         try await repository.updateTask(task)
     }
 

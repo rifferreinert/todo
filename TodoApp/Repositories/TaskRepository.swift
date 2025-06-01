@@ -56,67 +56,67 @@ protocol TaskRepository {
     ///   - title: The task title (required, must not be empty)
     ///   - notes: Optional notes for the task
     ///   - dueDate: Optional due date for the task
-    /// - Returns: The newly created task
+    /// - Returns: The newly created task DTO
     /// - Throws: `TaskRepositoryError.invalidTaskData` if title is empty
     ///           `TaskRepositoryError.persistenceFailure` if save operation fails
-    func createTask(title: String, notes: String?, dueDate: Date?) async throws -> Task
+    func createTask(title: String, notes: String?, dueDate: Date?) async throws -> TaskDTO
 
     /// Updates an existing task with new values
-    /// - Parameter task: The task to update with modified properties
+    /// - Parameter task: The task DTO to update with modified properties
     /// - Throws: `TaskRepositoryError.taskNotFound` if task doesn't exist
     ///           `TaskRepositoryError.persistenceFailure` if save operation fails
-    func updateTask(_ task: Task) async throws
+    func updateTask(_ task: TaskDTO) async throws
 
     /// Deletes a task from the repository
-    /// - Parameter task: The task to delete
+    /// - Parameter task: The task DTO to delete
     /// - Throws: `TaskRepositoryError.taskNotFound` if task doesn't exist
     ///           `TaskRepositoryError.persistenceFailure` if delete operation fails
-    func deleteTask(_ task: Task) async throws
+    func deleteTask(_ task: TaskDTO) async throws
 
     // MARK: - Query Operations
 
     /// Fetches all active (non-completed) tasks
-    /// - Returns: Array of active tasks, empty array if none exist
+    /// - Returns: Array of active task DTOs, empty array if none exist
     /// - Throws: `TaskRepositoryError.persistenceFailure` if fetch operation fails
-    func fetchAllActiveTasks() async throws -> [Task]
+    func fetchAllActiveTasks() async throws -> [TaskDTO]
 
     /// Fetches all archived (completed) tasks
-    /// - Returns: Array of archived tasks, empty array if none exist
+    /// - Returns: Array of archived task DTOs, empty array if none exist
     /// - Throws: `TaskRepositoryError.persistenceFailure` if fetch operation fails
-    func fetchAllArchivedTasks() async throws -> [Task]
+    func fetchAllArchivedTasks() async throws -> [TaskDTO]
 
     /// Fetches tasks sorted according to the specified order
     /// - Parameter sortOrder: The sorting criteria to apply
-    /// - Returns: Array of tasks sorted by the specified criteria
+    /// - Returns: Array of task DTOs sorted by the specified criteria
     /// - Throws: `TaskRepositoryError.persistenceFailure` if fetch operation fails
-    func fetchTasksSorted(by sortOrder: TaskSortOrder) async throws -> [Task]
+    func fetchTasksSorted(by sortOrder: TaskSortOrder) async throws -> [TaskDTO]
 
     /// Fetches the highest priority active task (for focus bar display)
-    /// - Returns: The next task to focus on, nil if no active tasks exist
+    /// - Returns: The next task DTO to focus on, nil if no active tasks exist
     /// - Throws: `TaskRepositoryError.persistenceFailure` if fetch operation fails
-    func fetchNextFocusTask() async throws -> Task?
+    func fetchNextFocusTask() async throws -> TaskDTO?
 
     // MARK: - Task State Operations
 
     /// Marks a task as completed and moves it to archived state
-    /// - Parameter task: The task to mark as complete
-    /// - Returns: The updated task in completed state
+    /// - Parameter task: The task DTO to mark as complete
+    /// - Returns: The updated task DTO in completed state
     /// - Throws: `TaskRepositoryError.taskNotFound` if task doesn't exist
     ///           `TaskRepositoryError.persistenceFailure` if save operation fails
-    func markTaskComplete(_ task: Task) async throws -> Task
+    func markTaskComplete(_ task: TaskDTO) async throws -> TaskDTO
 
     /// Marks a completed task as active (unarchive)
-    /// - Parameter task: The task to mark as active
-    /// - Returns: The updated task in active state
+    /// - Parameter task: The task DTO to mark as active
+    /// - Returns: The updated task DTO in active state
     /// - Throws: `TaskRepositoryError.taskNotFound` if task doesn't exist
     ///           `TaskRepositoryError.persistenceFailure` if save operation fails
-    func markTaskActive(_ task: Task) async throws -> Task
+    func markTaskActive(_ task: TaskDTO) async throws -> TaskDTO
 
     /// Updates the manual ordering of tasks
-    /// - Parameter tasks: Array of tasks in the desired order
+    /// - Parameter tasks: Array of task DTOs in the desired order
     /// - Throws: `TaskRepositoryError.persistenceFailure` if save operation fails
     ///           `TaskRepositoryError.validationError` if tasks array is invalid
-    func reorderTasks(_ tasks: [Task]) async throws
+    func reorderTasks(_ tasks: [TaskDTO]) async throws
 
     // MARK: - Batch Operations
 
@@ -141,9 +141,9 @@ protocol TaskRepository {
 extension TaskRepository {
     /// Convenience method to create a simple task with just a title
     /// - Parameter title: The task title
-    /// - Returns: The newly created task
+    /// - Returns: The newly created task DTO
     /// - Throws: Same errors as `createTask(title:notes:dueDate:)`
-    func createSimpleTask(title: String) async throws -> Task {
+    func createSimpleTask(title: String) async throws -> TaskDTO {
         return try await createTask(title: title, notes: nil, dueDate: nil)
     }
 
@@ -160,4 +160,27 @@ extension TaskRepository {
     func hasArchivedTasks() async throws -> Bool {
         return try await getArchivedTaskCount() > 0
     }
+}
+
+// MARK: - Task Data Transfer Object (DTO)
+
+/// A data transfer object representing a task, decoupled from Core Data.
+/// Use this type for all repository operations and view models.
+struct TaskDTO: Identifiable, Equatable {
+    /// The unique identifier for the task (UUID, persistence-agnostic)
+    let id: UUID
+    /// The task title (required, plain text)
+    let title: String
+    /// Optional notes for the task (plain text)
+    let notes: String?
+    /// Optional due date for the task
+    let dueDate: Date?
+    /// Whether the task is completed (archived)
+    let isCompleted: Bool
+    /// Manual order value for custom sorting
+    let order: Int32
+    /// The date the task was created
+    let createdAt: Date
+    /// The date the task was last updated
+    let updatedAt: Date
 }

@@ -6,22 +6,22 @@ import Combine
 final class TaskViewModelTests: XCTestCase {
     var cancellables: Set<AnyCancellable> = []
     fileprivate var mockRepository: MockTaskRepository!
-    fileprivate var sampleTask: Task!
+    fileprivate var sampleTask: TaskDTO!
 
     override func setUp() {
         super.setUp()
         mockRepository = MockTaskRepository()
-        // Use Core Data Task entity for sampleTask
-        let context = PersistenceController.preview.container.viewContext
-        let task = Task(context: context)
-        task.title = "Sample Task"
-        task.notes = "Some notes"
-        task.dueDate = Date().addingTimeInterval(3600)
-        task.isCompleted = false
-        task.order = 0
-        task.createdAt = Date()
-        task.updatedAt = Date()
-        sampleTask = task
+        // Create a sample TaskDTO directly (no Core Data)
+        sampleTask = TaskDTO(
+            id: UUID(),
+            title: "Sample Task",
+            notes: "Some notes",
+            dueDate: Date().addingTimeInterval(3600),
+            isCompleted: false,
+            order: 0,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
     }
 
     override func tearDown() {
