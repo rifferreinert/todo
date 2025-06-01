@@ -54,7 +54,7 @@
 
 - [x] 4.0 ViewModels & Business Logic
   - [x] 4.1 Implement `TaskViewModel` for individual task presentation logic.
-  - [ ] 4.2 Implement `TaskListViewModel` for list-level logic & sorting.
+  - [x] 4.2 Implement `TaskListViewModel` for list-level logic & sorting.
   - [ ] 4.3 Unit tests for ViewModels (sorting logic, completion flow, edge cases).
 
 - [ ] 5.0 Always-On-Top Focus Bar
