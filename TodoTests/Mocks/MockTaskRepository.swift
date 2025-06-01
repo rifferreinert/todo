@@ -5,9 +5,15 @@ import Foundation
 final class MockTaskRepository: TaskRepository {
     struct MockError: Error {}
     var shouldFail = false
-    var lastSavedTask: TaskDTO?
+    /// The last saved task, stored as a MockTask for test inspection.
+    private var lastSavedTask: MockTask?
     // In-memory storage for tasks as MockTask
     var tasks: [MockTask] = []
+
+    /// Returns the last saved task as a TaskDTO, or nil if none.
+    var lastSavedTaskDTO: TaskDTO? {
+        lastSavedTask?.toDTO()
+    }
 
     func createTask(title: String, notes: String?, dueDate: Date?) async throws -> TaskDTO {
         if shouldFail { throw MockError() }
@@ -22,15 +28,15 @@ final class MockTaskRepository: TaskRepository {
             updatedAt: Date()
         )
         tasks.append(mock)
-        let dto = mock.toDTO()
-        lastSavedTask = dto
-        return dto
+        lastSavedTask = mock
+        return mock.toDTO()
     }
     func updateTask(_ task: TaskDTO) async throws {
         if shouldFail { throw MockError() }
         if let idx = tasks.firstIndex(where: { $0.id == task.id }) {
-            tasks[idx] = MockTask(from: task)
-            lastSavedTask = task
+            let mock = MockTask(from: task)
+            tasks[idx] = mock
+            lastSavedTask = mock
         }
     }
     func deleteTask(_ task: TaskDTO) async throws {
