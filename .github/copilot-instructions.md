@@ -25,7 +25,7 @@ consider these laws when making decisions or providing assistance.
   - Write the minimum amount of code to pass the tests
   - Refactor the code to improve readability and maintainability
 - When following TDD, write the tests and do not write the implementation code until the user has gotten a chance to
-  give feedback on them and confirmed that they want to proceed with the implementation.
+  give feedback on them and confirmed that they want to proceed with the implementation. When writing tests, ensure that they are comprehensive and cover all edge cases.
 - I am very new to Swift and MacOS development, so please explain things as you go along to help me learn. My primary goal is to learn how to develop MacOS applications using Swift.
   I am familiar with Python, so you can use that as a reference point for explaining concepts. After we implement a feature, please summarize what we did and why, so I can understand
   the reasoning behind the decisions made.
