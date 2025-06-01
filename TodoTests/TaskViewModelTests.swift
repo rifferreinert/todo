@@ -11,7 +11,7 @@ final class TaskViewModelTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         mockRepository = MockTaskRepository()
-        sampleTask = try! await mockRepository.createTask(title: "Sample Task",
+        sampleTask = try await mockRepository.createTask(title: "Sample Task",
                                                         notes: "Some notes",
                                                         dueDate: Date().addingTimeInterval(3600)
         )
