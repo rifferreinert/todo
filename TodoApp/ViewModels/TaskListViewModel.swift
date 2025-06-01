@@ -1,10 +1,6 @@
 import Foundation
 import Combine
 import SwiftUI
-import struct _Concurrency.Task
-
-typealias ConcurrencyTask = _Concurrency.Task
-
 /// ViewModel for managing a list of tasks, sorting, and business logic.
 final class TaskListViewModel: ObservableObject {
     // MARK: - Published Properties
