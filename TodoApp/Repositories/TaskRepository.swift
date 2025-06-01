@@ -167,8 +167,8 @@ extension TaskRepository {
 /// A data transfer object representing a task, decoupled from Core Data.
 /// Use this type for all repository operations and view models.
 struct TaskDTO: Identifiable, Equatable {
-    /// The unique identifier for the task (backed by Core Data objectID)
-    let id: AnyHashable
+    /// The unique identifier for the task (UUID, persistence-agnostic)
+    let id: UUID
     /// The task title (required, plain text)
     let title: String
     /// Optional notes for the task (plain text)

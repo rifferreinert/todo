@@ -177,3 +177,71 @@ Mocks and tests currently reference the old `Task` class or `TaskModel`. They mu
 ## Testing Strategy & Acceptance Criteria
 - Run `TaskViewModelTests` and any UI tests to confirm UI still functions.
 - Manual smoke test in simulator: create, update, delete tasks and verify UI reflects DTO data correctly.
+
+---
+
+**Sub-task ID**: DTO-6
+**Sub-task Description**: Change `TaskDTO.id` type from `AnyHashable` to `UUID`.
+
+## Problem Statement and Goal
+The Core Data entity `Task` now has an `id: UUID` attribute. `TaskDTO` should use the same type to maintain a clear, serialisable identifier that is persistence-layer agnostic.
+
+## Relevant Files
+- `TaskRepository.swift` (DTO struct)
+- Any file that initialises `TaskDTO`
+
+## Sub-task Technical Approach
+1. Update `TaskDTO` declaration:
+   `let id: UUID`.
+2. Adjust initialisers and docstrings accordingly.
+
+## Testing Strategy & Acceptance Criteria
+- Code compiles with the new type.
+- Equality checks still function.
+
+---
+
+**Sub-task ID**: DTO-7
+**Sub-task Description**: Update `TaskRepository` documentation and default helpers for the `UUID` identifier.
+
+## Technical Approach
+1. Amend protocol comments that reference “Core Data `objectID`”.
+2. Remove wording that couples the identifier to Core Data.
+
+---
+
+**Sub-task ID**: DTO-8
+**Sub-task Description**: Refactor `CoreDataTaskRepository` to map the new `UUID` field.
+
+## Technical Approach
+1. Modify `mapToDTO(_:)` to return `task.id` (UUID).
+2. Replace `fetchManaged(_:)` with `fetchManaged(by uuid: UUID)` which performs an `NSFetchRequest` filtered by the `id` attribute.
+3. Update all repository methods that call `fetchManaged`.
+
+---
+
+**Sub-task ID**: DTO-9
+**Sub-task Description**: Migrate re-ordering and other logic that previously relied on `NSManagedObjectID`.
+
+## Technical Approach
+1. For `reorderTasks(_:)`, fetch each managed object by `UUID` instead of casting to `NSManagedObjectID`.
+2. Ensure order updates succeed and errors map to `TaskRepositoryError`.
+
+---
+
+**Sub-task ID**: DTO-10
+**Sub-task Description**: Update mocks and unit tests to use the `UUID` identifier.
+
+## Technical Approach
+1. Replace stored `id` values with fixed `UUID()` instances.
+2. Adjust equality assertions and sample data generators.
+
+---
+
+**Sub-task ID**: DTO-11
+**Sub-task Description**: Update view-models and UI bindings for the new `UUID` id.
+
+## Technical Approach
+1. Change property types (`id: UUID`).
+2. Verify `Identifiable` conformance still works in SwiftUI lists.
+3. Run UI tests and manually smoke-test drag-to-reorder features.
