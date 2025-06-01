@@ -15,10 +15,11 @@ final class FocusBarWindowController: NSWindowController {
         let contentView = NSHostingController(rootView: FocusBarPlaceholderView())
 
         // Determine main screen dimensions
+        let menuBarHeight = NSStatusBar.system.thickness + 1
         let screen = NSScreen.main
         let barHeight: CGFloat = 28
         let barWidth = screen?.frame.width ?? 800
-        let barOrigin = CGPoint(x: 0, y: (screen?.frame.maxY ?? barHeight) - barHeight)
+        let barOrigin = CGPoint(x: 0, y: (screen?.frame.maxY ?? barHeight) - menuBarHeight - barHeight)
         let barRect = CGRect(origin: barOrigin, size: CGSize(width: barWidth, height: barHeight))
 
         // Create the window
