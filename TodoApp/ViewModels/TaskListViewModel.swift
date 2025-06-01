@@ -39,11 +39,18 @@ final class TaskListViewModel: ObservableObject {
         do {
             let active = try await repository.fetchAllActiveTasks()
             let sorted = active.sorted {
-                switch ($0.dueDate, $1.dueDate) {
-                case let (d0?, d1?): return d0 < d1
-                case (nil, _?): return false
-                case (_?, nil): return true
-                case (nil, nil): return $0.order < $1.order
+                if let d0 = $0.dueDate, let d1 = $1.dueDate {
+                    if d0 != d1 {
+                        return d0 < d1
+                    } else {
+                        return $0.order < $1.order
+                    }
+                } else if $0.dueDate == nil && $1.dueDate != nil {
+                    return false
+                } else if $0.dueDate != nil && $1.dueDate == nil {
+                    return true
+                } else {
+                    return $0.order < $1.order
                 }
             }
             // Update order property
