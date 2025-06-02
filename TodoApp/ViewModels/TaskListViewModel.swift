@@ -54,8 +54,15 @@ final class TaskListViewModel: ObservableObject {
                 }
             }
             // Update order property
-            let reordered = sorted.enumerated().map { idx, t in
-                TaskDTO(id: t.id, title: t.title, notes: t.notes, dueDate: t.dueDate, isCompleted: t.isCompleted, order: Int32(idx), createdAt: t.createdAt, updatedAt: t.updatedAt)
+            let reordered = sorted.enumerated().map { idx, task in
+                TaskDTO(id: task.id,
+                    title: task.title,
+                    notes: task.notes,
+                    dueDate: task.dueDate,
+                    isCompleted: task.isCompleted,
+                    order: Int32(idx),
+                    createdAt: task.createdAt,
+                    updatedAt: task.updatedAt)
             }
             try await repository.reorderTasks(reordered)
             await loadTasks()
@@ -89,8 +96,10 @@ final class TaskListViewModel: ObservableObject {
     // MARK: - Internal Methods
     @MainActor
     private func setTasks(active: [TaskDTO], archived: [TaskDTO]) {
-        let activeVMs = active.sorted { $0.order < $1.order }.map { TaskViewModel(task: $0, repository: repository) }
-        let archivedVMs = archived.sorted { $0.order < $1.order }.map { TaskViewModel(task: $0, repository: repository) }
+        let activeVMs = active.sorted { $0.order < $1.order }
+            .map { TaskViewModel(task: $0, repository: repository) }
+        let archivedVMs = archived.sorted { $0.order < $1.order }
+            .map { TaskViewModel(task: $0, repository: repository) }
         self.tasks = activeVMs
         self.archivedTasks = archivedVMs
         self.focusTask = activeVMs.first

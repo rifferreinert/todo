@@ -11,8 +11,11 @@ final class FocusBarWindowController: NSWindowController {
     static let shared = FocusBarWindowController()
 
     private init() {
-        // Create the SwiftUI view for the bar (placeholder for now)
-        let contentView = NSHostingController(rootView: FocusBarPlaceholderView())
+        // Create the SwiftUI view for the bar (now using FocusBarView)
+        // TODO: Replace these with real bindings from the ViewModel in integration
+        let previewTitle = "Sample Focus Task"
+        let previewOpacity = Binding<Double>(get: { 0.8 }, set: { _ in })
+        let contentView = NSHostingController(rootView: FocusBarView(title: previewTitle, opacity: previewOpacity))
 
         // Determine main screen dimensions
         let menuBarHeight = NSStatusBar.system.thickness + 1
@@ -63,13 +66,7 @@ final class FocusBarWindowController: NSWindowController {
         window.isMovable = false
         window.isOpaque = false
         window.backgroundColor = .clear
-        // Use NSVisualEffectView for translucent background (AppKit does not have .ultraThinMaterial; use .underWindowBackground for similar effect)
-        let effectView = NSVisualEffectView(frame: barRect)
-        effectView.material = .underWindowBackground
-        effectView.blendingMode = .behindWindow
-        effectView.state = .active
-        effectView.alphaValue = 0.8
-        window.contentView?.addSubview(effectView, positioned: .below, relativeTo: contentView.view)
+        // Remove placeholder effectView, as FocusBarView handles background/opacity
 
         super.init(window: window)
     }
@@ -80,24 +77,16 @@ final class FocusBarWindowController: NSWindowController {
 
     /// Update the displayed task title (to be called from SwiftUI view model)
     func updateTaskTitle(_ title: String) {
-        // This will be implemented when FocusBarView is ready
-        // For now, this is a placeholder
-    }
-}
-
-/// Placeholder SwiftUI view for the bar (replace with FocusBarView in later sub-task)
-struct FocusBarPlaceholderView: View {
-    var body: some View {
-        Text("Focus Bar Placeholder")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.ultraThinMaterial)
+        // This will be implemented when FocusBarView is integrated with the real ViewModel.
+        // For now, this is a placeholder for future data binding.
     }
 }
 
 #if DEBUG
 struct FocusBarWindow_Previews: PreviewProvider {
+    @State static var previewOpacity: Double = 0.8
     static var previews: some View {
-        FocusBarPlaceholderView()
+        FocusBarView(title: "Preview Focus Task", opacity: $previewOpacity)
             .frame(width: 800, height: 28)
     }
 }

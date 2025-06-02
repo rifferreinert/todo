@@ -11,6 +11,7 @@ consider these laws when making decisions or providing assistance.
 - Use clear and concise variable names.
 - Use standard conventions for the language you are working in.
 - Code using SOLID principles
+- Code should follow accessibility best practices.
 - Validate all inputs
 - Validate that operations have succeeded where appropriate
 - If validations fail, throw an exception unless there is a simple and clear way to continue
