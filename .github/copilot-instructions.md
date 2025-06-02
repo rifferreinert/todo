@@ -7,6 +7,7 @@ consider these laws when making decisions or providing assistance.
   - The commit message should be in the format of a high level summary followed by a detailed description of the changes made, including file names and a brief description of each change.
 
 ## Code Style
+- Use idiomatic Swift code.
 - Use clear and concise variable names.
 - Use standard conventions for the language you are working in.
 - Code using SOLID principles
