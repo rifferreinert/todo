@@ -16,7 +16,7 @@ final class FocusBarWindowController: NSWindowController {
 
         // Determine main screen dimensions
         let menuBarHeight = NSStatusBar.system.thickness + 1
-        let screen = NSScreen.main
+        let screen = NSScreen.screens.first { $0.frame.origin == .zero } ?? NSScreen.main
         let barHeight: CGFloat = 28
         let barWidth = screen?.frame.width ?? 800
         let barOrigin = CGPoint(x: 0, y: (screen?.frame.maxY ?? barHeight) - menuBarHeight - barHeight)
