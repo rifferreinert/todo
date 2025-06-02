@@ -18,6 +18,7 @@
 - `TodoTests/TaskListViewModelTests.swift` – Unit tests for task list ViewModel.
 - `TodoTests/TodoTests.swift` – Main test suite entry point.
 - `TodoTests/TaskRepositoryTests.swift` – Tests for TaskRepository protocol.
+- `TodoTests/FocusBarWindowTests.swift` – Unit and integration tests for FocusBarWindowController.
 - `TodoUITests/FocusBarViewTests.swift` – UI tests for bar behaviour.
 - `TodoUITests/TaskListViewTests.swift` – UI tests for task window.
 - `.swiftlint.yml` – SwiftLint configuration for code style consistency.
@@ -57,8 +58,8 @@
   - [x] 4.2 Implement `TaskListViewModel` for list-level logic & sorting.
   - [x] 4.3 Unit tests for ViewModels (sorting logic, completion flow, edge cases).
 
-- [ ] 5.0 Always-On-Top Focus Bar
-  - [ ] 5.1 Create `FocusBarWindow` using `NSWindow.Level.statusBar`.
+- [x] 5.0 Always-On-Top Focus Bar
+  - [x] 5.1 Create `FocusBarWindow` using `NSWindow.Level.statusBar`.
   - [ ] 5.2 Build `FocusBarView` with task title, opacity slider (20–100 %).
   - [ ] 5.3 Persist opacity in `UserDefaults`; restore on launch.
   - [ ] 5.4 Add ellipsis truncation & fade animation on task change.
