@@ -8,7 +8,7 @@ import SwiftUI
 /// A window controller that hosts the always-on-top Focus Bar using SwiftUI for content.
 final class FocusBarWindowController: NSWindowController {
     /// Singleton instance to avoid duplicate windows.
-    static let shared = FocusBarWindowController()
+    static let shared: FocusBarWindowController = FocusBarWindowController()
 
     private init() {
         // Create the SwiftUI view for the bar (now using FocusBarView)
@@ -34,17 +34,14 @@ final class FocusBarWindowController: NSWindowController {
         )
         window.contentView = contentView.view
         window.level = .statusBar
-        window.isOpaque = false
-        window.backgroundColor = .clear
         window.hasShadow = false
         window.ignoresMouseEvents = false
         window.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
-        window.isMovable = false
         window.isReleasedWhenClosed = false
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.setFrame(barRect, display: true)
-        window.alphaValue = 0.8 // 80% opacity default
+        window.alphaValue = 1.0 // 100% opacity default
         window.isExcludedFromWindowsMenu = true
         window.standardWindowButton(.closeButton)?.isHidden = true
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
@@ -84,7 +81,7 @@ final class FocusBarWindowController: NSWindowController {
 
 #if DEBUG
 struct FocusBarWindow_Previews: PreviewProvider {
-    @State static var previewOpacity: Double = 0.8
+    @State static var previewOpacity: Double = 0.5
     static var previews: some View {
         FocusBarView(title: "Preview Focus Task", opacity: $previewOpacity)
             .frame(width: 800, height: 28)

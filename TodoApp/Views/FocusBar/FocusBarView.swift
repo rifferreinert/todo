@@ -28,7 +28,7 @@ struct FocusBarView: View {
                     onOpacityChange?(opacity)
                 })
                 .frame(width: 100)
-                .accessibilityLabel("Bar Opacity")
+                .accessibilityLabel("Todo Bar Opacity")
             }
         }
         .padding(.horizontal, 16)
@@ -40,7 +40,7 @@ struct FocusBarView: View {
 
 #if DEBUG
 struct FocusBarView_Previews: PreviewProvider {
-    @State static var previewOpacity: Double = 0.8
+    @State static var previewOpacity: Double = 1.0
     static var previews: some View {
         FocusBarView(
             title: "This is a very long focus task title that should be" +
