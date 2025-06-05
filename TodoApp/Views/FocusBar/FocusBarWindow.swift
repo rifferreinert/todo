@@ -57,7 +57,6 @@ final class FocusBarWindowController: NSWindowController {
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
         window.standardWindowButton(.zoomButton)?.isHidden = true
         window.collectionBehavior.insert(.fullScreenAuxiliary)
-        window.level = .statusBar
         window.orderFrontRegardless()
         window.makeKeyAndOrderFront(nil)
         window.isMovableByWindowBackground = false
