@@ -10,9 +10,16 @@ final class FocusBarWindowController: NSWindowController {
     /// Singleton instance to avoid duplicate windows.
     static let shared = FocusBarWindowController()
 
+    /// Persisted opacity value for the focus bar.
+    @AppStorage("focusBarOpacity") private var opacity: Double = 0.8
+
+    /// Background effect view used for translucency.
+    private var effectView: NSVisualEffectView?
+
     private init() {
-        // Create the SwiftUI view for the bar (placeholder for now)
-        let contentView = NSHostingController(rootView: FocusBarPlaceholderView())
+        // Create the hosting controller for the bar. Root view is assigned later to
+        // attach onChange handlers that require the window reference.
+        let contentView = NSHostingController(rootView: FocusBarView(opacity: $opacity))
 
         // Determine main screen dimensions
         let menuBarHeight = NSStatusBar.system.thickness + 1
@@ -41,7 +48,7 @@ final class FocusBarWindowController: NSWindowController {
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.setFrame(barRect, display: true)
-        window.alphaValue = 0.8 // 80% opacity default
+        window.alphaValue = opacity // use persisted opacity
         window.isExcludedFromWindowsMenu = true
         window.standardWindowButton(.closeButton)?.isHidden = true
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
@@ -68,8 +75,16 @@ final class FocusBarWindowController: NSWindowController {
         effectView.material = .underWindowBackground
         effectView.blendingMode = .behindWindow
         effectView.state = .active
-        effectView.alphaValue = 0.8
+        effectView.alphaValue = opacity
         window.contentView?.addSubview(effectView, positioned: .below, relativeTo: contentView.view)
+        self.effectView = effectView
+
+        // Update window and effect view opacity when slider value changes
+        contentView.rootView = FocusBarView(opacity: $opacity)
+            .onChange(of: opacity) { newValue in
+                window.alphaValue = newValue
+                effectView.alphaValue = newValue
+            }
 
         super.init(window: window)
     }
@@ -85,19 +100,10 @@ final class FocusBarWindowController: NSWindowController {
     }
 }
 
-/// Placeholder SwiftUI view for the bar (replace with FocusBarView in later sub-task)
-struct FocusBarPlaceholderView: View {
-    var body: some View {
-        Text("Focus Bar Placeholder")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.ultraThinMaterial)
-    }
-}
-
 #if DEBUG
 struct FocusBarWindow_Previews: PreviewProvider {
     static var previews: some View {
-        FocusBarPlaceholderView()
+        FocusBarView(opacity: .constant(0.8))
             .frame(width: 800, height: 28)
     }
 }
