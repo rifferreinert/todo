@@ -10,13 +10,24 @@ final class FocusBarWindowController: NSWindowController {
     /// Singleton instance to avoid duplicate windows.
     static let shared: FocusBarWindowController = FocusBarWindowController()
 
-    private init() {
-        // Create the SwiftUI view for the bar (now using FocusBarView)
-        // TODO: Replace these with real bindings from the ViewModel in integration
-        let previewTitle = "Sample Focus Task"
-        let previewOpacity = Binding<Double>(get: { 0.8 }, set: { _ in })
-        let contentView = NSHostingController(rootView: FocusBarView(title: previewTitle, opacity: previewOpacity))
+    private var opacity: Double = 0.8  // Default opacity value
+    {
+        didSet {
+            window?.alphaValue = opacity // Update window opacity when property changes
+        }
+    }
+    private var title: String = "Sample Focus Task"
 
+    private var opacityBinding: Binding<Double> {
+        Binding<Double>(
+            get: { [weak self] in self?.opacity ?? 1.0 },
+            set: { [weak self] newValue in self?.opacity = newValue }
+        )
+    }
+
+    private var hostingController: NSHostingController<FocusBarView>?
+
+    private init() {
         // Determine main screen dimensions
         let menuBarHeight = NSStatusBar.system.thickness + 1
         let screen = NSScreen.screens.first { $0.frame.origin == .zero } ?? NSScreen.main
@@ -32,7 +43,6 @@ final class FocusBarWindowController: NSWindowController {
             backing: .buffered,
             defer: false
         )
-        window.contentView = contentView.view
         window.level = .statusBar
         window.hasShadow = false
         window.ignoresMouseEvents = false
@@ -41,7 +51,7 @@ final class FocusBarWindowController: NSWindowController {
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.setFrame(barRect, display: true)
-        window.alphaValue = 1.0 // 100% opacity default
+        window.alphaValue = opacity // Use property value
         window.isExcludedFromWindowsMenu = true
         window.standardWindowButton(.closeButton)?.isHidden = true
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
@@ -66,6 +76,19 @@ final class FocusBarWindowController: NSWindowController {
         // Remove placeholder effectView, as FocusBarView handles background/opacity
 
         super.init(window: window)
+
+        // Now safe to use self for SwiftUI hosting
+        let hostingController = NSHostingController(
+            rootView: FocusBarView(
+                title: title,
+                opacity: opacityBinding,
+                onOpacityChange: { [weak self] newOpacity in
+                    self?.window?.alphaValue = newOpacity
+                }
+            )
+        )
+        window.contentView = hostingController.view
+        self.hostingController = hostingController
     }
 
     required init?(coder: NSCoder) {

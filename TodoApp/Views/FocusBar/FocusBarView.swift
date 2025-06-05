@@ -2,6 +2,7 @@
 // SwiftUI view for the always-on-top focus bar
 
 import SwiftUI
+import Foundation
 
 /// A SwiftUI view that displays the current focus task's title and an opacity slider.
 /// - Parameters:
