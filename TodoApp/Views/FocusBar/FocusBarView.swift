@@ -8,12 +8,10 @@ import Foundation
 /// - Parameters:
 ///   - title: The current focus task's title (String).
 ///   - opacity: The current opacity value (Double, 0.2–1.0).
-///   - onOpacityChange: Closure called when the opacity slider changes.
 struct FocusBarView: View {
     let title: String
     @Binding var opacity: Double
-    var onOpacityChange: ((Double) -> Void)?
-
+    
     var body: some View {
         HStack(spacing: 12) {
             Text(title.isEmpty ? "No Focus Task" : title)
@@ -25,9 +23,7 @@ struct FocusBarView: View {
             HStack(spacing: 4) {
                 Image(systemName: "circle.lefthalf.filled")
                     .accessibilityHidden(true)
-                Slider(value: $opacity, in: 0.2...1.0, step: 0.01, onEditingChanged: { _ in
-                    onOpacityChange?(opacity)
-                })
+                Slider(value: $opacity, in: 0.4...1, step: 0.01)
                 .frame(width: 100)
                 .accessibilityLabel("Todo Bar Opacity")
             }

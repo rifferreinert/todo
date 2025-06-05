@@ -10,7 +10,7 @@ final class FocusBarWindowController: NSWindowController {
     /// Singleton instance to avoid duplicate windows.
     static let shared: FocusBarWindowController = FocusBarWindowController()
 
-    private var opacity: Double = 0.8  // Default opacity value
+    private var opacity: Double = 1.0  // Default opacity value
     {
         didSet {
             window?.alphaValue = opacity // Update window opacity when property changes
@@ -81,10 +81,7 @@ final class FocusBarWindowController: NSWindowController {
         let hostingController = NSHostingController(
             rootView: FocusBarView(
                 title: title,
-                opacity: opacityBinding,
-                onOpacityChange: { [weak self] newOpacity in
-                    self?.window?.alphaValue = newOpacity
-                }
+                opacity: opacityBinding
             )
         )
         window.contentView = hostingController.view
