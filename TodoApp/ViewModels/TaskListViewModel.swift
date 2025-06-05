@@ -39,16 +39,30 @@ final class TaskListViewModel: ObservableObject {
         do {
             let active = try await repository.fetchAllActiveTasks()
             let sorted = active.sorted {
-                switch ($0.dueDate, $1.dueDate) {
-                case let (d0?, d1?): return d0 < d1
-                case (nil, _?): return false
-                case (_?, nil): return true
-                case (nil, nil): return $0.order < $1.order
+                if let d0 = $0.dueDate, let d1 = $1.dueDate {
+                    if d0 != d1 {
+                        return d0 < d1
+                    } else {
+                        return $0.order < $1.order
+                    }
+                } else if $0.dueDate == nil && $1.dueDate != nil {
+                    return false
+                } else if $0.dueDate != nil && $1.dueDate == nil {
+                    return true
+                } else {
+                    return $0.order < $1.order
                 }
             }
             // Update order property
-            let reordered = sorted.enumerated().map { idx, t in
-                TaskDTO(id: t.id, title: t.title, notes: t.notes, dueDate: t.dueDate, isCompleted: t.isCompleted, order: Int32(idx), createdAt: t.createdAt, updatedAt: t.updatedAt)
+            let reordered = sorted.enumerated().map { idx, task in
+                TaskDTO(id: task.id,
+                    title: task.title,
+                    notes: task.notes,
+                    dueDate: task.dueDate,
+                    isCompleted: task.isCompleted,
+                    order: Int32(idx),
+                    createdAt: task.createdAt,
+                    updatedAt: task.updatedAt)
             }
             try await repository.reorderTasks(reordered)
             await loadTasks()
@@ -82,8 +96,10 @@ final class TaskListViewModel: ObservableObject {
     // MARK: - Internal Methods
     @MainActor
     private func setTasks(active: [TaskDTO], archived: [TaskDTO]) {
-        let activeVMs = active.sorted { $0.order < $1.order }.map { TaskViewModel(task: $0, repository: repository) }
-        let archivedVMs = archived.sorted { $0.order < $1.order }.map { TaskViewModel(task: $0, repository: repository) }
+        let activeVMs = active.sorted { $0.order < $1.order }
+            .map { TaskViewModel(task: $0, repository: repository) }
+        let archivedVMs = archived.sorted { $0.order < $1.order }
+            .map { TaskViewModel(task: $0, repository: repository) }
         self.tasks = activeVMs
         self.archivedTasks = archivedVMs
         self.focusTask = activeVMs.first

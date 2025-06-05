@@ -34,9 +34,22 @@
 		B53240B42DE6C569009005F8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B575EEFD2DED47D000372783 /* Exceptions for "TodoApp" folder in "TodoUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Views/FocusBar/FocusBarView.swift,
+			);
+			target = B53240A02DE6C4C5009005F8 /* TodoUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B53240862DE6C4C3009005F8 /* TodoApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B575EEFD2DED47D000372783 /* Exceptions for "TodoApp" folder in "TodoUITests" target */,
+			);
 			path = TodoApp;
 			sourceTree = "<group>";
 		};

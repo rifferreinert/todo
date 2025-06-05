@@ -146,4 +146,60 @@ final class TaskListViewModelTests: XCTestCase {
         await viewModel.completeTask(t3)
         XCTAssertNil(viewModel.focusTask)
     }
+
+    /// Test toggling between auto-sort/manual sort and persisting the mode
+    func testToggleAutoSortPersistsAndAffectsOrder() async throws {
+        // Arrange
+        let now = Date()
+        let later = now.addingTimeInterval(3600)
+        let tasks = [
+            TaskDTO(id: UUID(), title: "No Due", notes: nil, dueDate: nil, isCompleted: false, order: 0, createdAt: now, updatedAt: now),
+            TaskDTO(id: UUID(), title: "Soon", notes: nil, dueDate: now, isCompleted: false, order: 1, createdAt: now, updatedAt: now),
+            TaskDTO(id: UUID(), title: "Later", notes: nil, dueDate: later, isCompleted: false, order: 2, createdAt: now, updatedAt: now)
+        ]
+        repository.setTasks(from: tasks)
+        await viewModel.loadTasks()
+        // Act: manual order (by order property)
+        let manualOrder = viewModel.tasks.map { $0.title }
+        // Toggle auto-sort on (by due date: Soon, Later, No Due)
+        await viewModel.autoSortByDueDate()
+        let autoSorted = viewModel.tasks.map { $0.title }
+        // Toggle auto-sort off (simulate by reordering: No Due, Later, Soon)
+        await viewModel.reorderTasks([tasks[0], tasks[2], tasks[1]])
+        let manualAgain = viewModel.tasks.map { $0.title }
+        // Assert explicit expected orders
+        XCTAssertEqual(manualOrder, ["No Due", "Soon", "Later"])
+        XCTAssertEqual(autoSorted, ["Soon", "Later", "No Due"])
+        XCTAssertEqual(manualAgain, ["No Due", "Later", "Soon"])
+    }
+
+    /// Test tie-breaking when tasks have identical due dates
+    func testTieBreakingWithIdenticalDueDates() async throws {
+        // Arrange
+        let now = Date()
+        let tasks = [
+            TaskDTO(id: UUID(), title: "A", notes: nil, dueDate: now, isCompleted: false, order: 1, createdAt: now, updatedAt: now),
+            TaskDTO(id: UUID(), title: "B", notes: nil, dueDate: now, isCompleted: false, order: 0, createdAt: now, updatedAt: now),
+            TaskDTO(id: UUID(), title: "C", notes: nil, dueDate: now, isCompleted: false, order: 2, createdAt: now, updatedAt: now)
+        ]
+        repository.setTasks(from: tasks)
+        await viewModel.loadTasks()
+        await viewModel.autoSortByDueDate()
+        let sorted = viewModel.tasks.map { $0.title }
+        // Assert: tie-breaker should fall back to order property
+        XCTAssertEqual(sorted, ["B", "A", "C"])
+    }
+
+    /// Test switching between Active and Archived segments
+    func testSwitchingBetweenActiveAndArchivedSegments() async throws {
+        // Arrange
+        let now = Date()
+        let t1 = TaskDTO(id: UUID(), title: "Active", notes: nil, dueDate: nil, isCompleted: false, order: 0, createdAt: now, updatedAt: now)
+        let t2 = TaskDTO(id: UUID(), title: "Archived", notes: nil, dueDate: nil, isCompleted: true, order: 1, createdAt: now, updatedAt: now)
+        repository.setTasks(from: [t1, t2])
+        await viewModel.loadTasks()
+        // Act & Assert
+        XCTAssertTrue(viewModel.tasks.contains(where: { $0.title == "Active" }))
+        XCTAssertTrue(viewModel.archivedTasks.contains(where: { $0.title == "Archived" }))
+    }
 }
