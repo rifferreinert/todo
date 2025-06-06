@@ -60,7 +60,7 @@
 
 - [x] 5.0 Always-On-Top Focus Bar
   - [x] 5.1 Create `FocusBarWindow` using `NSWindow.Level.statusBar`.
-  - [ ] 5.2 Build `FocusBarView` with task title, opacity slider (20–100 %).
+  - [x] 5.2 Build `FocusBarView` with task title, opacity slider (20–100 %).
   - [ ] 5.3 Persist opacity in `UserDefaults`; restore on launch.
   - [ ] 5.4 Add ellipsis truncation & fade animation on task change.
   - [ ] 5.5 Mirror bar across all virtual desktops.

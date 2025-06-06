@@ -4,16 +4,18 @@
 
 import AppKit
 import SwiftUI
+import Foundation
 
 /// A window controller that hosts the always-on-top Focus Bar using SwiftUI for content.
 final class FocusBarWindowController: NSWindowController {
     /// Singleton instance to avoid duplicate windows.
     static let shared: FocusBarWindowController = FocusBarWindowController()
 
-    private var opacity: Double = 1.0  // Default opacity value
+    private var opacity: Double = FocusBarOpacitySettings.load()  // Load from UserDefaults
     {
         didSet {
             window?.alphaValue = opacity // Update window opacity when property changes
+            FocusBarOpacitySettings.save(opacity) // Persist to UserDefaults
         }
     }
     private var title: String = "Sample Focus Task"

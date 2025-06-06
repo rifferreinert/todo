@@ -4,6 +4,12 @@
 import SwiftUI
 import Foundation
 
+// Import the settings utility file so FocusBarOpacitySettings is visible
+// (No explicit import needed if in same module, but ensure file is in target membership)
+#if canImport(FocusBarOpacitySettings)
+import FocusBarOpacitySettings
+#endif
+
 /// A SwiftUI view that displays the current focus task's title and an opacity slider.
 /// - Parameters:
 ///   - title: The current focus task's title (String).
@@ -11,7 +17,7 @@ import Foundation
 struct FocusBarView: View {
     let title: String
     @Binding var opacity: Double
-    
+
     var body: some View {
         HStack(spacing: 12) {
             Text(title.isEmpty ? "No Focus Task" : title)
@@ -23,7 +29,11 @@ struct FocusBarView: View {
             HStack(spacing: 4) {
                 Image(systemName: "circle.lefthalf.filled")
                     .accessibilityHidden(true)
-                Slider(value: $opacity, in: 0.4...1, step: 0.01)
+                Slider(
+                    value: $opacity,
+                    in: FocusBarOpacitySettings.minOpacity...FocusBarOpacitySettings.maxOpacity,
+                    step: 0.01
+                )
                 .frame(width: 100)
                 .accessibilityLabel("Todo Bar Opacity")
             }
