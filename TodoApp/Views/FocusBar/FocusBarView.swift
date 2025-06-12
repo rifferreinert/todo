@@ -40,7 +40,7 @@ struct FocusBarView: View {
         }
         .padding(.horizontal, 16)
         .frame(height: 28)
-        .background(.ultraThinMaterial.opacity(opacity))
+        .background(.ultraThinMaterial)
         .accessibilityElement(children: .combine)
     }
 }

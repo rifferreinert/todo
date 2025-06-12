@@ -3,6 +3,7 @@
 
 import XCTest
 @testable import Todo
+import SwiftUI
 
 final class FocusBarOpacitySettingsTests: XCTestCase {
     let testKey = FocusBarOpacitySettings.key
