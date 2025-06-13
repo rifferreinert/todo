@@ -39,6 +39,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Views/FocusBar/FocusBarView.swift,
+				"Views/FocusBar/UserDefaults+FocusBarOpacity.swift",
 			);
 			target = B53240A02DE6C4C5009005F8 /* TodoUITests */;
 		};

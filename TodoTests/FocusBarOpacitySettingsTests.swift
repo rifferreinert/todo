@@ -54,9 +54,10 @@ final class FocusBarOpacitySettingsTests: XCTestCase {
     func testSliderPersistsAndRestoresOpacity() {
         // This is a UI test stub: would require launching the app, adjusting the slider, relaunching, and verifying the value
         // For now, simulate the logic:
-        FocusBarOpacitySettings.save(0.42)
+        let value = FocusBarOpacitySettings.minOpacity + FocusBarOpacitySettings.maxOpacity / 2
+        FocusBarOpacitySettings.save(value)
         let restored = FocusBarOpacitySettings.load()
-        XCTAssertEqual(restored, 0.42, accuracy: 0.0001)
+        XCTAssertEqual(restored, value, accuracy: 0.0001)
     }
 
     func testRapidSliderChanges() {

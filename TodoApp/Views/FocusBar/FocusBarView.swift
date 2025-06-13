@@ -34,6 +34,7 @@ struct FocusBarView: View {
                     in: FocusBarOpacitySettings.minOpacity...FocusBarOpacitySettings.maxOpacity,
                     step: 0.01
                 )
+                .accessibilityIdentifier("focusBarOpacitySlider")
                 .frame(width: 100)
                 .accessibilityLabel("Todo Bar Opacity")
             }
