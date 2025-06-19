@@ -62,10 +62,11 @@
   - [x] 5.1 Create `FocusBarWindow` using `NSWindow.Level.statusBar`.
   - [x] 5.2 Build `FocusBarView` with task title, opacity slider (20–100 %).
   - [x] 5.3 Persist opacity in `UserDefaults`; restore on launch.
-  - [ ] 5.4 Add ellipsis truncation & fade animation on task change.
-  - [ ] 5.5 Mirror bar across all virtual desktops.
-  - [ ] 5.6 Provide VoiceOver labels and dynamic-type support.
-  - [ ] 5.7 UI tests: bar visibility, opacity persistence, title update.
+  - [x] 5.4 Write a CLI to create, delete, or list tasks with title, notes, dueDate.
+  - [ ] 5.5 Add ellipsis truncation & fade animation on task change.
+  - [ ] 5.6 Mirror bar across all virtual desktops.
+  - [ ] 5.7 Provide VoiceOver labels and dynamic-type support.
+  - [ ] 5.8 UI tests: bar visibility, opacity persistence, title update.
 
 - [ ] 6.0 Task Management Window
   - [ ] 6.1 Launch resizable `TaskListWindow` from menu/bar action.
