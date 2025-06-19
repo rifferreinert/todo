@@ -6,7 +6,7 @@ import Foundation
 struct FocusBarOpacitySettings {
     static let key = "FocusBarOpacity"
     static let defaultOpacity: Double = 1.0
-    static let minOpacity: Double = 0
+    static let minOpacity: Double = 0.3
     static let maxOpacity: Double = 1.0
 
     /// Reads the opacity value from UserDefaults, clamping to allowed range. Returns default if missing or invalid.
